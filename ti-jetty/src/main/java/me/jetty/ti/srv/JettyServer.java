@@ -31,7 +31,7 @@ public class JettyServer {
 
 	private final static Logger log = Log.getLogger(JettyServer.class);
 	
-	private static final String TEMP_DIRECTORY = ".data/.tmp";
+	private static final String TEMP_DIRECTORY = ".tmp/.vfs";
 	
 	private Server server;
 	private JedisPool pool;
