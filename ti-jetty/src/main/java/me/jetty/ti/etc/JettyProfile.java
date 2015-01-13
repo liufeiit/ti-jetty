@@ -1,10 +1,10 @@
-package me.andpay.ti.etc;
+package me.jetty.ti.etc;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.nio.charset.Charset;
 
-import me.andpay.ti.utils.StreamUtils;
+import me.jetty.ti.utils.StreamUtils;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import org.dom4j.Document;

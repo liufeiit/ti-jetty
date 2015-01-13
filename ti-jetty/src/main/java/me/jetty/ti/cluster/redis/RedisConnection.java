@@ -1,4 +1,4 @@
-package me.andpay.ti.cluster.redis;
+package me.jetty.ti.cluster.redis;
 
 import redis.clients.jedis.Jedis;
 

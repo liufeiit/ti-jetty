@@ -1,8 +1,8 @@
-package me.andpay.ti.srv;
+package me.jetty.ti.srv;
 
 import java.io.File;
 
-import me.andpay.ti.etc.JettyProfile;
+import me.jetty.ti.etc.JettyProfile;
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.SessionIdManager;

@@ -1,4 +1,4 @@
-package me.andpay.ti.srv;
+package me.jetty.ti.srv;
 
 import org.eclipse.jetty.security.SecurityHandler;
 import org.eclipse.jetty.server.HandlerContainer;

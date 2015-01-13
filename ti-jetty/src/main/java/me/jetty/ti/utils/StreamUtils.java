@@ -1,4 +1,4 @@
-package me.andpay.ti.utils;
+package me.jetty.ti.utils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FilterInputStream;
