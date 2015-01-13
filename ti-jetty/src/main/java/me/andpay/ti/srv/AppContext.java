@@ -15,11 +15,6 @@ import org.eclipse.jetty.webapp.WebAppContext;
  */
 public class AppContext extends WebAppContext {
 	
-	public AppContext() {
-		super();
-		this._options = SECURITY;
-	}
-
 	public AppContext(int options) {
 		super();
 		this._options = options;

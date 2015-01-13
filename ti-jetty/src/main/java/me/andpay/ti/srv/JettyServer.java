@@ -5,7 +5,11 @@ import java.io.File;
 import me.andpay.ti.etc.JettyProfile;
 
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.SessionIdManager;
+import org.eclipse.jetty.server.SessionManager;
 import org.eclipse.jetty.server.nio.SelectChannelConnector;
+import org.eclipse.jetty.server.session.HashSessionIdManager;
+import org.eclipse.jetty.server.session.HashSessionManager;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.util.log.Log;
 import org.eclipse.jetty.util.log.Logger;
@@ -26,6 +30,8 @@ import com.ovea.jetty.session.redis.RedisSessionManager;
 public class JettyServer {
 
 	private final static Logger log = Log.getLogger(JettyServer.class);
+	
+	private static final String TEMP_DIRECTORY = ".data/.tmp";
 	
 	private Server server;
 	private JedisPool pool;
@@ -77,12 +83,7 @@ public class JettyServer {
 		server.setThreadPool(threadPool);
 
 		//设置web应用信息.
-		AppContext context;
-		if(JettyProfile.App_Use_Sessions) {
-			context = new AppContext(AppContext.SESSIONS | AppContext.SECURITY);
-		} else {
-			context = new AppContext();
-		}
+		AppContext context = new AppContext(AppContext.SESSIONS | AppContext.SECURITY);
 		
 		context.setContextPath(JettyProfile.App_ContextPath);
 		context.setWar(JettyProfile.App_War);
@@ -90,12 +91,14 @@ public class JettyServer {
 		
 		context.setExtractWAR(JettyProfile.App_Extract_WAR);
 
-		File tmp = new File(".data/.tmp");
+		File tmp = new File(TEMP_DIRECTORY);
 		if(!tmp.exists()) {
 			tmp.mkdirs();
 		}
 		context.setTempDirectory(tmp);
 
+		SessionManager sessionManager;
+		SessionIdManager sessionIdManager;
 		if(JettyProfile.App_Use_Sessions) {
 			//设置session集群redis服务
 			JedisPoolConfig poolConfig = new JedisPoolConfig();
@@ -103,13 +106,17 @@ public class JettyServer {
 			poolConfig.setMinIdle(JettyProfile.Redis_MinIdle);
 			poolConfig.setMaxIdle(JettyProfile.Redis_MaxIdle);
 			poolConfig.setMaxWait(JettyProfile.Redis_MaxWait);
-			
 			pool = new JedisPool(poolConfig, JettyProfile.Redis_Host, JettyProfile.Redis_Port, JettyProfile.Redis_Timeout);
-			RedisSessionManager sessionHandler = new RedisSessionManager(pool);
-			sessionHandler.setSessionIdManager(new RedisSessionIdManager(server, pool));
-			
-			context.setSessionHandler(new SessionHandler(sessionHandler));
+			sessionManager = new RedisSessionManager(pool);
+			sessionIdManager = new RedisSessionIdManager(server, pool);
+		} else {
+			sessionManager = new HashSessionManager();
+			sessionIdManager = new HashSessionIdManager();
 		}
+		
+		sessionManager.setSessionIdManager(sessionIdManager);
+		context.setSessionHandler(new SessionHandler(sessionManager));
+		server.setSessionIdManager(sessionIdManager);
 		
 		server.setHandler(context);
 		

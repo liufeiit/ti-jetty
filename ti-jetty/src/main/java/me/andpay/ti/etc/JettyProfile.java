@@ -53,7 +53,7 @@ public class JettyProfile {
 	
 	static {
 		try {
-			File etc = new File("etc/server.xml");
+			File etc = new File("etc/profile.xml");
 			String xml = StreamUtils.copyToString(new FileInputStream(etc), Charset.forName("UTF-8"));
 			Document document = DocumentHelper.parseText(xml);
 			Element root = document.getRootElement();

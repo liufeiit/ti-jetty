@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<server>
+	<port>8081</port>
+	<context-path>/</context-path>
+	<use-session>true</use-session>
+	<extract-war>true</extract-war>
+	<war>/home/andpay/app/lc/jetty/apps/lc.war</war>
+	<connector>
+		<accept-queue-size>100</accept-queue-size>
+		<max-idle-time>5000</max-idle-time>
+	</connector>
+	<thread-pool>
+		<name>Jetty.ThreadPool.CFC.0001</name>
+		<min-threads>5</min-threads>
+		<max-threads>200</max-threads>
+		<max-queued>50</max-queued>
+		<max-idle-time-ms>5000</max-idle-time-ms>
+		<max-stop-time-ms>5000</max-stop-time-ms>
+	</thread-pool>
+	<cluster>
+		<redis-host>127.0.0.1</redis-host>
+		<redis-port>6379</redis-port>
+		<redis-max-active>500</redis-max-active>
+		<redis-min-idle>5</redis-min-idle>
+		<redis-max-idle>20</redis-max-idle>
+		<redis-max-wait>10000</redis-max-wait>
+		<redis-timeout>3000</redis-timeout>
+	</cluster>
+</server>
