@@ -33,7 +33,7 @@ public class JettyServer {
 
 	private final static Logger log = Log.getLogger(JettyServer.class);
 
-	private static final String TEMP_DIRECTORY = ".tmp/.vfs/";
+	private static final String TEMP_DIRECTORY = "../.tmp/.vfs/";
 
 	private Server server;
 	private JedisPool pool;
@@ -43,14 +43,12 @@ public class JettyServer {
 	public JettyServer() {
 		super();
 		try {
-			final JettyServer jettyServer = new JettyServer();
-			jettyServer.start();
-
+			start();
 			Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
 				@Override
 				public void run() {
 					try {
-						jettyServer.stop();
+						stop();
 					} catch (Exception e) {
 						log.warn("Jetty Stop Error.", e);
 					}

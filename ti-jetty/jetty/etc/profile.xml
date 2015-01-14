@@ -2,9 +2,9 @@
 <server>
 	<port>8081</port>
 	<context-path>/</context-path>
-	<use-session>true</use-session>
+	<use-session>false</use-session>
 	<extract-war>true</extract-war>
-	<war>/home/andpay/app/lc/jetty/apps/lc.war</war>
+	<war>D://software/jboss-as-web-7.0.1.Final/standalone/deployments/scape-api.war</war>
 	<connector>
 		<accept-queue-size>100</accept-queue-size>
 		<max-idle-time>5000</max-idle-time>
