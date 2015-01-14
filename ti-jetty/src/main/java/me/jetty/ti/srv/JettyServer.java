@@ -1,6 +1,8 @@
 package me.jetty.ti.srv;
 
 import java.io.File;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import me.jetty.ti.etc.JettyProfile;
 
@@ -30,43 +32,49 @@ import com.ovea.jetty.session.redis.RedisSessionManager;
 public class JettyServer {
 
 	private final static Logger log = Log.getLogger(JettyServer.class);
-	
+
 	private static final String TEMP_DIRECTORY = ".tmp/.vfs/";
-	
+
 	private Server server;
 	private JedisPool pool;
 	
-	public static void main(String[] args) {
+    private AtomicBoolean started = new AtomicBoolean(false);
+
+	public JettyServer() {
+		super();
 		try {
 			final JettyServer jettyServer = new JettyServer();
 			jettyServer.start();
-			
+
 			Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
 				@Override
 				public void run() {
 					try {
-						jettyServer.server.stop();
-						jettyServer.pool.destroy();
+						jettyServer.stop();
 					} catch (Exception e) {
 						log.warn("Jetty Stop Error.", e);
 					}
 				}
 			}));
-			
+
 		} catch (Exception e) {
 			log.warn("Jetty Start Error.", e);
 		}
 	}
-	
-	public void start() throws Exception {
+
+	private void start() throws Exception {
+		if(started.compareAndSet(true, true) && isStarted()){
+    		System.err.println("Jetty Server has been started.");
+    		return;
+    	}
 		server = new Server();
-		
+
 		SelectChannelConnector connector = new SelectChannelConnector();
 		connector.setPort(JettyProfile.Server_Port);
 		connector.setAcceptQueueSize(JettyProfile.Connector_AcceptQueueSize);
 		connector.setAcceptors(Runtime.getRuntime().availableProcessors() * 2);
 		connector.setMaxIdleTime(JettyProfile.Connector_MaxIdleTime);
-		//注册连接器
+		// 注册连接器
 		server.addConnector(connector);
 
 		QueuedThreadPool threadPool = new QueuedThreadPool();
@@ -79,50 +87,74 @@ public class JettyServer {
 		threadPool.setDetailedDump(true);
 		threadPool.setName(JettyProfile.Thread_Name);
 		threadPool.setThreadsPriority(Thread.NORM_PRIORITY);
-		//注册请求处理线程池
+		// 注册请求处理线程池
 		server.setThreadPool(threadPool);
 
-		//设置web应用信息.
-		AppContext context = new AppContext(AppContext.SESSIONS | AppContext.SECURITY);
-		
+		// 设置web应用信息.
+		WebApp context = new WebApp(WebApp.SESSIONS | WebApp.SECURITY);
+
 		context.setContextPath(JettyProfile.App_ContextPath);
 		context.setWar(JettyProfile.App_War);
 		context.setParentLoaderPriority(true);
-		
+
 		context.setExtractWAR(JettyProfile.App_Extract_WAR);
 
-		File tmp = new File(TEMP_DIRECTORY + "_" + System.currentTimeMillis());
-		if(!tmp.exists()) {
+		File tmp = new File(TEMP_DIRECTORY + System.currentTimeMillis() + "_" + guid());
+		if (!tmp.exists()) {
 			tmp.mkdirs();
 		}
 		context.setTempDirectory(tmp);
 
 		SessionManager sessionManager;
 		SessionIdManager sessionIdManager;
-		if(JettyProfile.App_Use_Sessions) {
-			//设置session集群redis服务
+		if (JettyProfile.App_Use_Sessions) {
+			// 设置session集群redis服务
 			JedisPoolConfig poolConfig = new JedisPoolConfig();
 			poolConfig.setMaxActive(JettyProfile.Redis_MaxActive);
 			poolConfig.setMinIdle(JettyProfile.Redis_MinIdle);
 			poolConfig.setMaxIdle(JettyProfile.Redis_MaxIdle);
 			poolConfig.setMaxWait(JettyProfile.Redis_MaxWait);
-			pool = new JedisPool(poolConfig, JettyProfile.Redis_Host, JettyProfile.Redis_Port, JettyProfile.Redis_Timeout);
+			pool = new JedisPool(poolConfig, JettyProfile.Redis_Host, JettyProfile.Redis_Port,
+					JettyProfile.Redis_Timeout);
 			sessionManager = new RedisSessionManager(pool);
 			sessionIdManager = new RedisSessionIdManager(server, pool);
 		} else {
 			sessionManager = new HashSessionManager();
 			sessionIdManager = new HashSessionIdManager();
 		}
-		
+
 		sessionManager.setSessionIdManager(sessionIdManager);
 		context.setSessionHandler(new SessionHandler(sessionManager));
 		server.setSessionIdManager(sessionIdManager);
-		
+
 		server.setHandler(context);
-		
+
+		System.err.println("Starting Jetty Server ...\n" + " Listen Port : " + JettyProfile.Server_Port);
+
 		server.start();
+		started.set(true);
 		server.join();
-		
-		System.err.println("Jetty Server Started Success.\n" + " Server Listen Port : " + JettyProfile.Server_Port);
+
+		System.err.println("Jetty Server Started Success.\n" + " Listen Port : " + JettyProfile.Server_Port);
+	}
+
+	private void stop() throws Exception {
+		if(!isStarted()) {
+			return;
+		}
+		System.err.println("Stoping Jetty Server ...");
+		server.stop();
+		pool.destroy();
+		System.err.println("Stop Jetty Server Success.");
+	}
+	
+	private boolean isStarted() {
+		return server != null && server.isStarted();
+	}
+
+	private String guid() {
+		String guid = UUID.randomUUID().toString();
+		return guid.substring(0, 8) + guid.substring(9, 13) + guid.substring(14, 18) + guid.substring(19, 23)
+				+ guid.substring(24);
 	}
 }

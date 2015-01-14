@@ -6,12 +6,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Pack200;
-
-import org.eclipse.jetty.util.log.Log;
-import org.eclipse.jetty.util.log.Logger;
 
 /**
  * 
@@ -19,34 +17,24 @@ import org.eclipse.jetty.util.log.Logger;
  * @version 1.0.0
  * @since 2015年1月14日 上午1:10:05
  */
+@SuppressWarnings("rawtypes")
 public class ServerStarter {
-
-	private final static Logger log = Log.getLogger(ServerStarter.class);
 
 	private static final String DEFAULT_LIB_DIR = "../lib";
 
-	private static final String DEFAULT_EXT_LIB_DIR = "../ext";
-
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException, ClassNotFoundException, InstantiationException,
+			IllegalAccessException {
 		new ServerStarter().start();
 	}
 
-	private void start() {
-		try {
-			final ClassLoader parent = findParentClassLoader();
-			File libDir = new File(DEFAULT_LIB_DIR);
-			unpackArchives(libDir, true);
-			File extLibDir = new File(DEFAULT_EXT_LIB_DIR);
-			if (extLibDir.exists()) {
-				unpackArchives(extLibDir, false);
-			}
-			ClassLoader loader = new JettyClassLoader(parent, libDir);
-			Thread.currentThread().setContextClassLoader(loader);
-			Class containerClass = loader.loadClass("me.jetty.ti.srv.JettyServer");
-			containerClass.newInstance();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	private void start() throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+		final ClassLoader parent = findParentClassLoader();
+		File libDir = new File(DEFAULT_LIB_DIR);
+		unpackArchives(libDir, true);
+		ClassLoader loader = new JettyClassLoader(parent, libDir);
+		Thread.currentThread().setContextClassLoader(loader);
+		Class serverClass = loader.loadClass("me.jetty.ti.srv.JettyServer");
+		serverClass.newInstance();
 	}
 
 	private ClassLoader findParentClassLoader() {
@@ -90,7 +78,7 @@ public class ServerStarter {
 				packedFile.delete();
 				unpacked = true;
 			} catch (Exception e) {
-				e.printStackTrace();
+				e.printStackTrace(System.err);
 			}
 		}
 		if (unpacked && printStatus) {

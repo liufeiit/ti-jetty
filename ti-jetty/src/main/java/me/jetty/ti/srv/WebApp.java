@@ -13,24 +13,24 @@ import org.eclipse.jetty.webapp.WebAppContext;
  * @version 1.0.0
  * @since 2015年1月13日 上午10:48:58
  */
-public class AppContext extends WebAppContext {
+public class WebApp extends WebAppContext {
 	
-	public AppContext(int options) {
+	public WebApp(int options) {
 		super();
 		this._options = options;
 	}
 
-	public AppContext(HandlerContainer parent, String webApp, String contextPath, int options) {
+	public WebApp(HandlerContainer parent, String webApp, String contextPath, int options) {
 		super(parent, webApp, contextPath);
 		this._options = options;
 	}
 
-	public AppContext(SessionHandler sessionHandler, SecurityHandler securityHandler, ServletHandler servletHandler, ErrorHandler errorHandler, int options) {
+	public WebApp(SessionHandler sessionHandler, SecurityHandler securityHandler, ServletHandler servletHandler, ErrorHandler errorHandler, int options) {
 		super(sessionHandler, securityHandler, servletHandler, errorHandler);
 		this._options = options;
 	}
 
-	public AppContext(String webApp, String contextPath, int options) {
+	public WebApp(String webApp, String contextPath, int options) {
 		super(webApp, contextPath);
 		this._options = options;
 	}
