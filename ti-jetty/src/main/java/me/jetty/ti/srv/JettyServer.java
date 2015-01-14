@@ -31,7 +31,7 @@ public class JettyServer {
 
 	private final static Logger log = Log.getLogger(JettyServer.class);
 	
-	private static final String TEMP_DIRECTORY = ".tmp/.vfs";
+	private static final String TEMP_DIRECTORY = ".tmp/.vfs/";
 	
 	private Server server;
 	private JedisPool pool;
@@ -91,7 +91,7 @@ public class JettyServer {
 		
 		context.setExtractWAR(JettyProfile.App_Extract_WAR);
 
-		File tmp = new File(TEMP_DIRECTORY);
+		File tmp = new File(TEMP_DIRECTORY + "_" + System.currentTimeMillis());
 		if(!tmp.exists()) {
 			tmp.mkdirs();
 		}
