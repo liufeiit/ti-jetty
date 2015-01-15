@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <server>
-	<port>8081</port>
+	<port>8080</port>
 	<context-path>/</context-path>
 	<use-session>false</use-session>
 	<extract-war>true</extract-war>
-	<war>D://software/jboss-as-web-7.0.1.Final/standalone/deployments/scape-api.war</war>
+	<war>/root/apps/scape_api/scape-api.war</war>
 	<connector>
 		<accept-queue-size>100</accept-queue-size>
 		<max-idle-time>5000</max-idle-time>
