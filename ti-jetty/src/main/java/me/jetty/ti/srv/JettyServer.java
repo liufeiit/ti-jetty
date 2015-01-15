@@ -62,7 +62,7 @@ public class JettyServer {
 
 	private void start() throws Exception {
 		if(started.compareAndSet(true, true) && isStarted()){
-    		System.err.println("Jetty Server has been started.");
+			log.warn("Jetty Server has been started.");
     		return;
     	}
 		server = new Server();
@@ -127,23 +127,27 @@ public class JettyServer {
 
 		server.setHandler(context);
 
-		System.err.println("Starting Jetty Server ...\n" + " Listen Port : " + JettyProfile.Server_Port);
+		log.info("Starting Jetty Server ...\n" + " Listen Port : " + JettyProfile.Server_Port);
 
 		server.start();
 		started.set(true);
 		server.join();
 
-		System.err.println("Jetty Server Started Success.\n" + " Listen Port : " + JettyProfile.Server_Port);
+		log.info("Jetty Server Started Success.\n" + " Listen Port : " + JettyProfile.Server_Port);
 	}
 
 	private void stop() throws Exception {
 		if(!isStarted()) {
 			return;
 		}
-		System.err.println("Stoping Jetty Server ...");
-		server.stop();
+		log.info("Stoping Jetty Server ...");
+		try {
+			server.stop();
+		} catch (Exception e) {
+			log.warn("Jetty Server Stop Error.", e);
+		}
 		pool.destroy();
-		System.err.println("Stop Jetty Server Success.");
+		log.info("Stop Jetty Server Success.");
 	}
 	
 	private boolean isStarted() {

@@ -18,25 +18,26 @@ public class JettyClassLoader extends URLClassLoader {
 		super(new URL[] { libDir.toURI().toURL() }, parent);
 		File[] jars = libDir.listFiles(new FilenameFilter() {
 			public boolean accept(File dir, String name) {
-				boolean accept = false;
 				String smallName = name.toLowerCase();
 				if (smallName.endsWith(".jar")) {
-					accept = true;
-				} else if (smallName.endsWith(".zip")) {
-					accept = true;
+					return true;
 				}
-				return accept;
+				if (smallName.endsWith(".zip")) {
+					return true;
+				}
+				return false;
 			}
 		});
-
 		if (jars == null) {
 			return;
 		}
-
 		for (int i = 0; i < jars.length; i++) {
-			if (jars[i].isFile()) {
-				addURL(jars[i].toURI().toURL());
+			if (!jars[i].isFile()) {
+				continue;
 			}
+			URL jar = jars[i].toURI().toURL();
+			System.err.println("Loading Jar : " + jar);
+			addURL(jar);
 		}
 	}
 }

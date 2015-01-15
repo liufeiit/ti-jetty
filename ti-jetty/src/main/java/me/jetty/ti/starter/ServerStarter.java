@@ -11,6 +11,9 @@ import java.io.InputStream;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Pack200;
 
+import org.eclipse.jetty.util.log.Log;
+import org.eclipse.jetty.util.log.Logger;
+
 /**
  * 
  * @author 刘飞 E-mail:liufei_it@126.com
@@ -20,11 +23,17 @@ import java.util.jar.Pack200;
 @SuppressWarnings("rawtypes")
 public class ServerStarter {
 
+	private final static Logger log = Log.getLogger(ServerStarter.class);
+
 	private static final String DEFAULT_LIB_DIR = "../lib";
 
-	public static void main(String[] args) throws IOException, ClassNotFoundException, InstantiationException,
-			IllegalAccessException {
-		new ServerStarter().start();
+	public static void main(String[] args) {
+		try {
+			new ServerStarter().start();
+		} catch (Exception e) {
+			log.warn("Jetty Server Started Error.", e);
+			System.exit(-1);
+		}
 	}
 
 	private void start() throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
@@ -58,27 +67,43 @@ public class ServerStarter {
 			return;
 		}
 		boolean unpacked = false;
+		Pack200.Unpacker unpacker = Pack200.newUnpacker();
 		for (File packedFile : packedFiles) {
+			InputStream in = null;
+			JarOutputStream out = null;
 			try {
 				String jarName = packedFile.getName().substring(0, packedFile.getName().length() - ".pack".length());
 				File jarFile = new File(libDir, jarName);
 				if (jarFile.exists()) {
 					jarFile.delete();
 				}
-				InputStream in = new BufferedInputStream(new FileInputStream(packedFile));
-				JarOutputStream out = new JarOutputStream(new BufferedOutputStream(new FileOutputStream(new File(
-						libDir, jarName))));
-				Pack200.Unpacker unpacker = Pack200.newUnpacker();
+				in = new BufferedInputStream(new FileInputStream(packedFile));
+				out = new JarOutputStream(new BufferedOutputStream(new FileOutputStream(new File(libDir, jarName))));
 				if (printStatus) {
 					System.out.print(".");
 				}
 				unpacker.unpack(in, out);
-				in.close();
-				out.close();
 				packedFile.delete();
 				unpacked = true;
 			} catch (Exception e) {
-				e.printStackTrace(System.err);
+				log.warn("Unpack Error.\nPackedFile : " + packedFile, e);
+			} finally {
+				if (in != null) {
+					try {
+						in.close();
+					} catch (IOException e) {
+						log.warn("close stream Error.", e);
+					}
+					in = null;
+				}
+				if (out != null) {
+					try {
+						out.close();
+					} catch (IOException e) {
+						log.warn("close stream Error.", e);
+					}
+					out = null;
+				}
 			}
 		}
 		if (unpacked && printStatus) {
