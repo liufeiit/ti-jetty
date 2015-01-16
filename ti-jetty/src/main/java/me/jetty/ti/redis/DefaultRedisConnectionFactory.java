@@ -1,4 +1,4 @@
-package me.jetty.ti.cluster.redis;
+package me.jetty.ti.redis;
 
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;

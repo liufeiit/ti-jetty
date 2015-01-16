@@ -1,4 +1,4 @@
-package me.jetty.ti.cluster.redis;
+package me.jetty.ti.redis;
 
 public interface RedisConnectionFactory {
 	/**

@@ -78,7 +78,7 @@ public class JettyProfile {
 			JettyProfile.Thread_MaxIdleTimeMs = NumberUtils.toInt(threadPool.elementTextTrim("max-idle-time-ms"), 5000);
 			JettyProfile.Thread_MaxStopTimeMs = NumberUtils.toInt(threadPool.elementTextTrim("max-stop-time-ms"), 5000);
 
-			Element cluster = root.element("cluster");
+			Element cluster = root.element("redis");
 			JettyProfile.Redis_Host = cluster.elementTextTrim("redis-host");
 			JettyProfile.Redis_Port = NumberUtils.toInt(cluster.elementTextTrim("redis-port"), 6379);
 			JettyProfile.Redis_MaxActive = NumberUtils.toInt(cluster.elementTextTrim("redis-max-active"), 500);

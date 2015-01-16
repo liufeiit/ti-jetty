@@ -1,4 +1,4 @@
-package me.jetty.ti.cluster.redis;
+package me.jetty.ti.redis;
 
 import org.eclipse.jetty.util.log.Log;
 import org.eclipse.jetty.util.log.Logger;
