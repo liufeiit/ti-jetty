@@ -9,12 +9,12 @@ public class DefaultRedisConnectionFactory implements RedisConnectionFactory {
 	 * 缺省连接缓存尺寸
 	 */
 	public static final int DEFAULT_CONNECTION_CACHE_SIZE = 2;
-	
+
 	/**
 	 * 缺省连接最大数量
 	 */
 	public static final int DEFAULT_CONNECTION_MAX_SIZE = 5;
-	
+
 	/**
 	 * jedis池
 	 */
@@ -44,29 +44,28 @@ public class DefaultRedisConnectionFactory implements RedisConnectionFactory {
 	 * 数据库
 	 */
 	private int database = Protocol.DEFAULT_DATABASE;
-	
+
 	/**
 	 * 连接缓存尺寸
 	 */
 	private int connectionCacheSize = DEFAULT_CONNECTION_CACHE_SIZE;
-	
+
 	/**
 	 * 连接最大数量
 	 */
 	private int connectionMaxSize = DEFAULT_CONNECTION_MAX_SIZE;
 
-	public void afterPropertiesSet() {
-		if ( connectionMaxSize < connectionCacheSize ) {
+	public RedisConnectionFactory init() {
+		if (connectionMaxSize < connectionCacheSize) {
 			connectionMaxSize = connectionCacheSize;
 		}
-		
 		JedisPoolConfig poolConfig = new JedisPoolConfig();
 		poolConfig.setMaxActive(connectionMaxSize);
 		poolConfig.setMinIdle(connectionCacheSize);
 		poolConfig.setMaxIdle(connectionMaxSize);
-		poolConfig.setMaxWait((int )timeout);
-		
-		pool = new JedisPool(poolConfig, host, port, (int )timeout, password, database);
+		poolConfig.setMaxWait((int) timeout);
+		pool = new JedisPool(poolConfig, host, port, (int) timeout, password, database);
+		return this;
 	}
 
 	public void destroy() throws Exception {

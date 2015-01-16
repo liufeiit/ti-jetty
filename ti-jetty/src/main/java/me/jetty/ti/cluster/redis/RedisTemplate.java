@@ -3,6 +3,9 @@ package me.jetty.ti.cluster.redis;
 import java.util.Set;
 
 public interface RedisTemplate {
+	
+	<T> T execute(RedisCallback<T> action);
+	
 	/**
 	 * 设置Value
 	 * 
@@ -108,16 +111,4 @@ public interface RedisTemplate {
 	 * @return
 	 */
 	String getSet(String key, String value);
-
-	/**
-	 * 关闭连接
-	 * 
-	 * @param consumerThreadIds
-	 */
-	void closeConnections(Set<Long> consumerThreadIds);
-
-	/**
-	 * 清空整个数据库
-	 */
-	void flushDb();
 }

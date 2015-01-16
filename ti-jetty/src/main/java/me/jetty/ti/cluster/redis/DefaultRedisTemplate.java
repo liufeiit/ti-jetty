@@ -1,9 +1,7 @@
 package me.jetty.ti.cluster.redis;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 import redis.clients.jedis.Jedis;
 
@@ -18,43 +16,19 @@ public class DefaultRedisTemplate implements RedisTemplate {
 	 */
 	private RedisConnectionFactory connectionFactory;
 
-	/**
-	 * 连接池
-	 */
-	private Map<Long, RedisConnection> connections = new ConcurrentHashMap<Long, RedisConnection>();
-
-	protected interface RedisCallback<T> {
-		T doInRedis(Jedis jedis) throws Throwable;
-	}
-
-	protected <T> T execute(RedisCallback<T> action) {
+	public <T> T execute(RedisCallback<T> action) {
 		RedisConnection conn = connectionFactory.getConnection();
 		try {
-			connections.put(Thread.currentThread().getId(), conn);
 			Jedis jedis = conn.getJedis();
 			if (dbIndex != null) {
 				jedis.select(dbIndex);
 			}
-			T retObj = action.doInRedis(jedis);
-			conn.close();
-			return retObj;
+			return action.doInRedis(jedis);
 		} catch (Throwable ex) {
 			conn.closeBroken();
 			throw new RuntimeException(ex.getMessage(), ex);
 		} finally {
-			connections.remove(Thread.currentThread().getId());
-		}
-	}
-
-	public void closeConnections(Set<Long> consumerThreadIds) {
-		for (long tid : consumerThreadIds) {
-			RedisConnection conn = connections.remove(tid);
-			if (conn != null) {
-				try {
-					conn.forceClose();
-				} catch (Throwable e) {
-				}
-			}
+			conn.close();
 		}
 	}
 
@@ -182,14 +156,6 @@ public class DefaultRedisTemplate implements RedisTemplate {
 		});
 	}
 
-	public void flushDb() {
-		execute(new RedisCallback<String>() {
-			public String doInRedis(Jedis jedis) throws Throwable {
-				return jedis.flushDB();
-			}
-		});
-	}
-
 	public Integer getDbIndex() {
 		return dbIndex;
 	}
@@ -205,5 +171,4 @@ public class DefaultRedisTemplate implements RedisTemplate {
 	public void setConnectionFactory(RedisConnectionFactory connectionFactory) {
 		this.connectionFactory = connectionFactory;
 	}
-
 }

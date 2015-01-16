@@ -8,7 +8,7 @@ import redis.clients.jedis.JedisPool;
 
 public class DefaultRedisConnection implements RedisConnection {
 	private Logger logger = Log.getLogger(getClass());
-	
+
 	/**
 	 * Jedis对象
 	 */
@@ -23,7 +23,7 @@ public class DefaultRedisConnection implements RedisConnection {
 		this.pool = pool;
 		jedis = this.pool.getResource();
 	}
-	
+
 	public Jedis getJedis() {
 		return jedis;
 	}
@@ -47,7 +47,7 @@ public class DefaultRedisConnection implements RedisConnection {
 	public void forceClose() {
 		try {
 			jedis.disconnect();
-		} catch(Throwable e) {
+		} catch (Throwable e) {
 			logger.warn("Return jedis resource meet error.", e);
 		}
 	}
