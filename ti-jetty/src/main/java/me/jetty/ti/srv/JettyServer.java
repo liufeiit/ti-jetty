@@ -97,7 +97,7 @@ public class JettyServer {
 
 		context.setExtractWAR(JettyProfile.App_Extract_WAR);
 
-		File tmp = new File(TEMP_DIRECTORY + System.currentTimeMillis() + "_" + guid());
+		File tmp = new File(TEMP_DIRECTORY + guid());
 		if (!tmp.exists()) {
 			tmp.mkdirs();
 		}
