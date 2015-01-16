@@ -37,8 +37,8 @@ public class JettyServer {
 
 	private Server server;
 	private JedisPool pool;
-	
-    private AtomicBoolean started = new AtomicBoolean(false);
+
+	private AtomicBoolean started = new AtomicBoolean(false);
 
 	public JettyServer() {
 		super();
@@ -61,10 +61,10 @@ public class JettyServer {
 	}
 
 	private void start() throws Exception {
-		if(started.compareAndSet(true, true) && isStarted()){
+		if (started.compareAndSet(true, true) && isStarted()) {
 			log.warn("Jetty Server has been started.");
-    		return;
-    	}
+			return;
+		}
 		server = new Server();
 
 		SelectChannelConnector connector = new SelectChannelConnector();
@@ -112,8 +112,7 @@ public class JettyServer {
 			poolConfig.setMinIdle(JettyProfile.Redis_MinIdle);
 			poolConfig.setMaxIdle(JettyProfile.Redis_MaxIdle);
 			poolConfig.setMaxWait(JettyProfile.Redis_MaxWait);
-			pool = new JedisPool(poolConfig, JettyProfile.Redis_Host, JettyProfile.Redis_Port,
-					JettyProfile.Redis_Timeout);
+			pool = new JedisPool(poolConfig, JettyProfile.Redis_Host, JettyProfile.Redis_Port, JettyProfile.Redis_Timeout);
 			sessionManager = new RedisSessionManager(pool);
 			sessionIdManager = new RedisSessionIdManager(server, pool);
 		} else {
@@ -137,7 +136,7 @@ public class JettyServer {
 	}
 
 	private void stop() throws Exception {
-		if(!isStarted()) {
+		if (!isStarted()) {
 			return;
 		}
 		log.info("Stoping Jetty Server ...");
@@ -149,14 +148,13 @@ public class JettyServer {
 		pool.destroy();
 		log.info("Stop Jetty Server Success.");
 	}
-	
+
 	private boolean isStarted() {
 		return server != null && server.isStarted();
 	}
 
 	private String guid() {
 		String guid = UUID.randomUUID().toString();
-		return guid.substring(0, 8) + guid.substring(9, 13) + guid.substring(14, 18) + guid.substring(19, 23)
-				+ guid.substring(24);
+		return System.currentTimeMillis() + "_" + guid.substring(0, 8) + guid.substring(9, 13) + guid.substring(14, 18) + guid.substring(19, 23) + guid.substring(24);
 	}
 }
