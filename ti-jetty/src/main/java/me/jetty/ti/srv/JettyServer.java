@@ -39,28 +39,8 @@ public class JettyServer {
 	private JedisPool pool;
 
 	private AtomicBoolean started = new AtomicBoolean(false);
-
-	public JettyServer() {
-		super();
-		try {
-			start();
-			Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
-				@Override
-				public void run() {
-					try {
-						stop();
-					} catch (Exception e) {
-						log.warn("Jetty Stop Error.", e);
-					}
-				}
-			}));
-
-		} catch (Exception e) {
-			log.warn("Jetty Start Error.", e);
-		}
-	}
-
-	private void start() throws Exception {
+	
+	void start() throws Exception {
 		if (started.compareAndSet(true, true) && isStarted()) {
 			log.warn("Jetty Server has been started.");
 			return;
@@ -135,17 +115,26 @@ public class JettyServer {
 		log.info("Jetty Server Started Success.\n" + " Listen Port : " + JettyProfile.Server_Port);
 	}
 
-	private void stop() throws Exception {
+	void stop() throws Exception {
 		if (!isStarted()) {
 			return;
 		}
+		started.set(false);
 		log.info("Stoping Jetty Server ...");
 		try {
 			server.stop();
+			server = null;
 		} catch (Exception e) {
 			log.warn("Jetty Server Stop Error.", e);
 		}
-		pool.destroy();
+		try {
+			if(pool != null) {
+				pool.destroy();
+				pool = null;
+			}
+		} catch (Exception e) {
+			log.warn("Destroy Jedis Pool Error.", e);
+		}
 		log.info("Stop Jetty Server Success.");
 	}
 

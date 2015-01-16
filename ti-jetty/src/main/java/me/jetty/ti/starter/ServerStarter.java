@@ -42,7 +42,7 @@ public class ServerStarter {
 		unpackArchives(libDir, true);
 		ClassLoader loader = new JettyClassLoader(parent, libDir);
 		Thread.currentThread().setContextClassLoader(loader);
-		Class serverClass = loader.loadClass("me.jetty.ti.srv.JettyServer");
+		Class serverClass = loader.loadClass("me.jetty.ti.srv.JettyStarter");
 		serverClass.newInstance();
 	}
 
