@@ -6,9 +6,15 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import me.jetty.ti.etc.JettyProfile;
 
+import org.eclipse.jetty.plus.jndi.Resource;
+import org.eclipse.jetty.server.Handler;
+import org.eclipse.jetty.server.NCSARequestLog;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.SessionIdManager;
 import org.eclipse.jetty.server.SessionManager;
+import org.eclipse.jetty.server.handler.ContextHandlerCollection;
+import org.eclipse.jetty.server.handler.HandlerCollection;
+import org.eclipse.jetty.server.handler.RequestLogHandler;
 import org.eclipse.jetty.server.nio.SelectChannelConnector;
 import org.eclipse.jetty.server.session.HashSessionIdManager;
 import org.eclipse.jetty.server.session.HashSessionManager;
@@ -22,6 +28,7 @@ import redis.clients.jedis.JedisPoolConfig;
 
 import com.ovea.jetty.session.redis.RedisSessionIdManager;
 import com.ovea.jetty.session.redis.RedisSessionManager;
+import com.ovea.jetty.session.serializer.JsonSerializer;
 
 /**
  * 
@@ -33,13 +40,25 @@ public class JettyServer {
 
 	private final static Logger log = Log.getLogger(JettyServer.class);
 
-	private static final String TEMP_DIRECTORY = "../.tmp/.vfs/";
+	private static final File Temp_Directory = new File("../.tmp/.vfs/");
+	private static final File Log_Directory = new File("../logs/");
+	
+	public static final String Session_Redis_Jndi_Name = "session/redis";
 
 	private Server server;
-	private JedisPool pool;
 
 	private AtomicBoolean started = new AtomicBoolean(false);
-	
+
+	public JettyServer() {
+		super();
+		if (!Temp_Directory.exists()) {
+			Temp_Directory.mkdirs();
+		}
+		if (!Log_Directory.exists()) {
+			Log_Directory.mkdirs();
+		}
+	}
+
 	void start() throws Exception {
 		if (started.compareAndSet(true, true) && isStarted()) {
 			log.warn("Jetty Server has been started.");
@@ -72,12 +91,15 @@ public class JettyServer {
 		WebApp context = new WebApp(WebApp.SESSIONS | WebApp.SECURITY);
 
 		context.setContextPath(JettyProfile.App_ContextPath);
+		context.setResourceBase(".");
 		context.setWar(JettyProfile.App_War);
 		context.setParentLoaderPriority(true);
+		// 注册自定义的加载器
+		context.setClassLoader(Thread.currentThread().getContextClassLoader());
 
-		context.setExtractWAR(JettyProfile.App_Extract_WAR);
+		context.setExtractWAR(true);
 
-		File tmp = new File(TEMP_DIRECTORY + guid());
+		File tmp = new File(Temp_Directory, guid());
 		if (!tmp.exists()) {
 			tmp.mkdirs();
 		}
@@ -92,9 +114,25 @@ public class JettyServer {
 			poolConfig.setMinIdle(JettyProfile.Redis_MinIdle);
 			poolConfig.setMaxIdle(JettyProfile.Redis_MaxIdle);
 			poolConfig.setMaxWait(JettyProfile.Redis_MaxWait);
-			pool = new JedisPool(poolConfig, JettyProfile.Redis_Host, JettyProfile.Redis_Port, JettyProfile.Redis_Timeout);
-			sessionManager = new RedisSessionManager(pool);
-			sessionIdManager = new RedisSessionIdManager(server, pool);
+			JedisPool pool = new JedisPool(poolConfig, JettyProfile.Redis_Host, JettyProfile.Redis_Port,
+					JettyProfile.Redis_Timeout);
+			Resource resource = new Resource(Session_Redis_Jndi_Name, pool);
+			server.addBean(resource);
+			
+			sessionManager = new RedisSessionManager(Session_Redis_Jndi_Name, new JsonSerializer());
+			sessionManager.setCheckingRemoteSessionIdEncoding(true);
+
+			((RedisSessionManager) sessionManager).setSaveInterval(20);
+			((RedisSessionManager) sessionManager).setSessionDomain("127.0.0.1");
+			((RedisSessionManager) sessionManager).setSessionPath("/");
+			((RedisSessionManager) sessionManager).setMaxCookieAge(86400);
+			((RedisSessionManager) sessionManager).setRefreshCookieAge(300);
+
+			sessionIdManager = new RedisSessionIdManager(server, Session_Redis_Jndi_Name);
+
+			((RedisSessionIdManager) sessionIdManager).setScavengerInterval(30000);
+			((RedisSessionIdManager) sessionIdManager).setWorkerName("node-001");
+
 		} else {
 			sessionManager = new HashSessionManager();
 			sessionIdManager = new HashSessionIdManager();
@@ -104,15 +142,29 @@ public class JettyServer {
 		context.setSessionHandler(new SessionHandler(sessionManager));
 		server.setSessionIdManager(sessionIdManager);
 
-		server.setHandler(context);
+		HandlerCollection handlers = new HandlerCollection();
+		ContextHandlerCollection contexts = new ContextHandlerCollection();
+		RequestLogHandler logHandler = new RequestLogHandler();
+		NCSARequestLog requestLog = new NCSARequestLog(
+				new File(Log_Directory, "jetty-yyyy_mm_dd.log").getAbsolutePath());
+		requestLog.setExtended(false);
+		logHandler.setRequestLog(requestLog);
+		handlers.setHandlers(new Handler[] { contexts, context, logHandler });
+
+		server.setHandler(handlers);
 
 		log.info("Starting Jetty Server ...\n" + " Listen Port : " + JettyProfile.Server_Port);
 
+		server.setStopAtShutdown(true);
+		server.setSendServerVersion(true);
+
 		server.start();
 		started.set(true);
+		log.info(server.dump());
+		log.info("Jetty Server Started Success.\n" + " Listen Port : " + JettyProfile.Server_Port);
+
 		server.join();
 
-		log.info("Jetty Server Started Success.\n" + " Listen Port : " + JettyProfile.Server_Port);
 	}
 
 	void stop() throws Exception {
@@ -127,14 +179,6 @@ public class JettyServer {
 		} catch (Exception e) {
 			log.warn("Jetty Server Stop Error.", e);
 		}
-		try {
-			if(pool != null) {
-				pool.destroy();
-				pool = null;
-			}
-		} catch (Exception e) {
-			log.warn("Destroy Jedis Pool Error.", e);
-		}
 		log.info("Stop Jetty Server Success.");
 	}
 
@@ -144,6 +188,7 @@ public class JettyServer {
 
 	private String guid() {
 		String guid = UUID.randomUUID().toString();
-		return System.currentTimeMillis() + "_" + guid.substring(0, 8) + guid.substring(9, 13) + guid.substring(14, 18) + guid.substring(19, 23) + guid.substring(24);
+		return System.currentTimeMillis() + "_" + guid.substring(0, 8) + guid.substring(9, 13) + guid.substring(14, 18)
+				+ guid.substring(19, 23) + guid.substring(24);
 	}
 }

@@ -29,7 +29,6 @@ public class JettyProfile {
 	public static String 	App_War;
 	
 	public static boolean 	App_Use_Sessions;
-	public static boolean 	App_Extract_WAR;
 	
 	/**每个请求被accept前允许等待的连接数**/
 	public static int 		Connector_AcceptQueueSize;
@@ -64,7 +63,6 @@ public class JettyProfile {
 			JettyProfile.App_War = root.elementTextTrim("war");
 			
 			JettyProfile.App_Use_Sessions = Boolean.parseBoolean(root.elementTextTrim("use-session"));
-			JettyProfile.App_Extract_WAR = Boolean.parseBoolean(root.elementTextTrim("extract-war"));
 			
 			Element connector = root.element("connector");
 			JettyProfile.Connector_AcceptQueueSize = NumberUtils.toInt(connector.elementTextTrim("accept-queue-size"), 100);
