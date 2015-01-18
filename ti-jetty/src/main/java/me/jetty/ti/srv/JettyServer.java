@@ -6,14 +6,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import me.jetty.ti.etc.JettyProfile;
 
-import org.eclipse.jetty.plus.jndi.Resource;
-import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.NCSARequestLog;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.SessionIdManager;
 import org.eclipse.jetty.server.SessionManager;
-import org.eclipse.jetty.server.handler.ContextHandlerCollection;
-import org.eclipse.jetty.server.handler.HandlerCollection;
 import org.eclipse.jetty.server.handler.RequestLogHandler;
 import org.eclipse.jetty.server.nio.SelectChannelConnector;
 import org.eclipse.jetty.server.session.HashSessionIdManager;
@@ -42,8 +38,6 @@ public class JettyServer {
 
 	private static final File Temp_Directory = new File("../.tmp/.vfs/");
 	private static final File Log_Directory = new File("../logs/");
-	
-	public static final String Session_Redis_Jndi_Name = "session/redis";
 
 	private Server server;
 
@@ -91,12 +85,8 @@ public class JettyServer {
 		WebApp context = new WebApp(WebApp.SESSIONS | WebApp.SECURITY);
 
 		context.setContextPath(JettyProfile.App_ContextPath);
-		context.setResourceBase(".");
 		context.setWar(JettyProfile.App_War);
 		context.setParentLoaderPriority(true);
-		// 注册自定义的加载器
-		context.setClassLoader(Thread.currentThread().getContextClassLoader());
-
 		context.setExtractWAR(true);
 
 		File tmp = new File(Temp_Directory, guid());
@@ -116,19 +106,16 @@ public class JettyServer {
 			poolConfig.setMaxWait(JettyProfile.Redis_MaxWait);
 			JedisPool pool = new JedisPool(poolConfig, JettyProfile.Redis_Host, JettyProfile.Redis_Port,
 					JettyProfile.Redis_Timeout);
-			Resource resource = new Resource(Session_Redis_Jndi_Name, pool);
-			server.addBean(resource);
-			
-			sessionManager = new RedisSessionManager(Session_Redis_Jndi_Name, new JsonSerializer());
-			sessionManager.setCheckingRemoteSessionIdEncoding(true);
+
+			sessionManager = new RedisSessionManager(pool, new JsonSerializer());
 
 			((RedisSessionManager) sessionManager).setSaveInterval(20);
 			((RedisSessionManager) sessionManager).setSessionDomain("127.0.0.1");
-			((RedisSessionManager) sessionManager).setSessionPath("/");
+			((RedisSessionManager) sessionManager).setSessionPath(JettyProfile.App_ContextPath);
 			((RedisSessionManager) sessionManager).setMaxCookieAge(86400);
 			((RedisSessionManager) sessionManager).setRefreshCookieAge(300);
 
-			sessionIdManager = new RedisSessionIdManager(server, Session_Redis_Jndi_Name);
+			sessionIdManager = new RedisSessionIdManager(server, pool);
 
 			((RedisSessionIdManager) sessionIdManager).setScavengerInterval(30000);
 			((RedisSessionIdManager) sessionIdManager).setWorkerName("node-001");
@@ -142,16 +129,14 @@ public class JettyServer {
 		context.setSessionHandler(new SessionHandler(sessionManager));
 		server.setSessionIdManager(sessionIdManager);
 
-		HandlerCollection handlers = new HandlerCollection();
-		ContextHandlerCollection contexts = new ContextHandlerCollection();
 		RequestLogHandler logHandler = new RequestLogHandler();
 		NCSARequestLog requestLog = new NCSARequestLog(
 				new File(Log_Directory, "jetty-yyyy_mm_dd.log").getAbsolutePath());
 		requestLog.setExtended(false);
 		logHandler.setRequestLog(requestLog);
-		handlers.setHandlers(new Handler[] { contexts, context, logHandler });
 
-		server.setHandler(handlers);
+		context.setHandler(logHandler);
+		server.setHandler(context);
 
 		log.info("Starting Jetty Server ...\n" + " Listen Port : " + JettyProfile.Server_Port);
 
@@ -160,7 +145,7 @@ public class JettyServer {
 
 		server.start();
 		started.set(true);
-		log.info(server.dump());
+		server.dumpStdErr();
 		log.info("Jetty Server Started Success.\n" + " Listen Port : " + JettyProfile.Server_Port);
 
 		server.join();

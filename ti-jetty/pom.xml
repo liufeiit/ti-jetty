@@ -54,17 +54,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
-			<artifactId>jetty-client</artifactId>
-			<version>${jetty.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-deploy</artifactId>
-			<version>${jetty.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.jetty</groupId>
-			<artifactId>jetty-jsp</artifactId>
 			<version>${jetty.version}</version>
 		</dependency>
 		<dependency>
@@ -126,33 +116,6 @@
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-http-spi</artifactId>
 			<version>${jetty.version}</version>
-		</dependency>
-		
-		<dependency>
-			<groupId>org.eclipse.jetty</groupId>
-			<artifactId>jetty-embedded-examples</artifactId>
-			<version>7.0.0.M2</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.jetty</groupId>
-			<artifactId>jetty-jaas</artifactId>
-			<version>9.3.0.M1</version>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.jetty</groupId>
-			<artifactId>jetty-proxy</artifactId>
-			<version>9.3.0.M1</version>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.jetty</groupId>
-			<artifactId>jetty-runner</artifactId>
-			<version>9.3.0.M1</version>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.jetty</groupId>
-			<artifactId>jetty-util-ajax</artifactId>
-			<version>9.3.0.M1</version>
 		</dependency>
 
 		<dependency>
