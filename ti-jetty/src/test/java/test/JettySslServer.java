@@ -5,6 +5,7 @@ import org.eclipse.jetty.server.ssl.SslSelectChannelConnector;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 
 /**
+ * http://wiki.eclipse.org/Jetty/Tutorial/Embedding_Jetty
  * 
  * @author john.liu E-mail:fei.liu@yeepay.com
  * @version 1.0.0
