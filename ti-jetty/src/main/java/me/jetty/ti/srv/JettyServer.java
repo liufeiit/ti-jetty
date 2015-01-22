@@ -38,6 +38,7 @@ public class JettyServer {
 
 	private static final File Temp_Directory = new File("../.tmp/.vfs/");
 	private static final File Log_Directory = new File("../logs/");
+	private static final File App_Directory = new File("../app/");
 
 	private Server server;
 
@@ -50,6 +51,9 @@ public class JettyServer {
 		}
 		if (!Log_Directory.exists()) {
 			Log_Directory.mkdirs();
+		}
+		if (!App_Directory.exists()) {
+			App_Directory.mkdirs();
 		}
 	}
 
