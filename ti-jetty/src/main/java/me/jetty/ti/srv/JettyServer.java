@@ -127,6 +127,7 @@ public class JettyServer {
 
 		sessionManager.setSessionIdManager(sessionIdManager);
 		context.setSessionHandler(new SessionHandler(sessionManager));
+		System.out.println("WebInf : " + context.getWebInf());
 		server.setSessionIdManager(sessionIdManager);
 
 		RequestLogHandler logHandler = new RequestLogHandler();
@@ -145,7 +146,7 @@ public class JettyServer {
 
 		server.start();
 		started.set(true);
-		server.dumpStdErr();
+//		server.dumpStdErr();
 		log.info("Jetty Server Started Success.\n" + " Listen Port : " + JettyProfile.Server_Port);
 
 		server.join();

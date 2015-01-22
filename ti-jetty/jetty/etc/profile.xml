@@ -3,7 +3,8 @@
 	<port>8080</port>
 	<context-path>/</context-path>
 	<use-session>false</use-session>
-	<war>/root/apps/scape_api/scape-api.war</war>
+	<!--<war>/root/apps/scape_api/scape-api.war</war>-->
+	<war>F://dev/workspace/scape/scape/api/target/scape-api</war>
 	<connector>
 		<accept-queue-size>100</accept-queue-size>
 		<max-idle-time>5000</max-idle-time>
