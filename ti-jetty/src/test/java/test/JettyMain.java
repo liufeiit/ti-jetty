@@ -27,10 +27,6 @@ import org.eclipse.jetty.xml.XmlConfiguration;
  */
 public class JettyMain {
 
-	public static void main(String[] args) {
-		System.out.println((ServletContextHandler.SESSIONS | ServletContextHandler.SECURITY) & ServletContextHandler.SESSIONS);
-	}
-	
 	public static void main22(String[] args) throws Exception {
 		Server server = new Server();
 
@@ -77,22 +73,14 @@ public class JettyMain {
 		System.err.println("Jetty Server started.");
 	}
 
-	public static void main1111(String[] args) throws Exception {
-		NCSARequestLog log = new NCSARequestLog();
-		ContextHandlerCollection contexts = new ContextHandlerCollection();
-		ResourceHandler resource_handler = new ResourceHandler();
-		resource_handler.setDirectoriesListed(true);
-		resource_handler.setWelcomeFiles(new String[] { "index.html" });
-		resource_handler.setResourceBase(".");
-		
-		Resource resource = Resource.newClassPathResource("jetty.xml"); 
-        XmlConfiguration configuration = new XmlConfiguration(resource.getInputStream());
-		
+	public static void main(String[] args) throws Exception {
 		Server server = new Server(8080);
 		ResourceHandler resourceHandler = new ResourceHandler();
 		resourceHandler.setDirectoriesListed(true);
+		resourceHandler.setWelcomeFiles(new String[] { "index.html"});
 		resourceHandler.setResourceBase("/Users/yp");
 		resourceHandler.setStylesheet("");
+		resourceHandler.setEtags(true);
 		HandlerList handlers = new HandlerList();
 		handlers.setHandlers(new Handler[] { resourceHandler });
 		server.setHandler(handlers);

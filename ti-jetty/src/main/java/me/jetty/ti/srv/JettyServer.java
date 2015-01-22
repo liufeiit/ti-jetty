@@ -1,6 +1,7 @@
 package me.jetty.ti.srv;
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -38,10 +39,15 @@ public class JettyServer {
 
 	private static final File Temp_Directory = new File("../.tmp/.vfs/");
 	private static final File Log_Directory = new File("../logs/");
+	private static final File App_Directory = new File("../app/");
 
 	private Server server;
 
 	private AtomicBoolean started = new AtomicBoolean(false);
+	
+	public static void main(String[] args) {
+		System.out.println(String.valueOf(new BigDecimal(0.01D)));
+	}
 
 	public JettyServer() {
 		super();
@@ -50,6 +56,9 @@ public class JettyServer {
 		}
 		if (!Log_Directory.exists()) {
 			Log_Directory.mkdirs();
+		}
+		if (!App_Directory.exists()) {
+			App_Directory.mkdirs();
 		}
 	}
 
