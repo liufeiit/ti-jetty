@@ -1,6 +1,7 @@
 package me.jetty.ti.srv;
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -43,6 +44,10 @@ public class JettyServer {
 	private Server server;
 
 	private AtomicBoolean started = new AtomicBoolean(false);
+	
+	public static void main(String[] args) {
+		System.out.println(String.valueOf(new BigDecimal(0.01D)));
+	}
 
 	public JettyServer() {
 		super();
