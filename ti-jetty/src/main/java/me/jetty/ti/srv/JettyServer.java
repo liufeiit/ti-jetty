@@ -140,9 +140,15 @@ public class JettyServer {
 		server.setSessionIdManager(sessionIdManager);
 
 		RequestLogHandler logHandler = new RequestLogHandler();
-		NCSARequestLog requestLog = new NCSARequestLog(
-				new File(Log_Directory, "jetty-yyyy_mm_dd.log").getAbsolutePath());
-		requestLog.setExtended(false);
+		NCSARequestLog requestLog = new NCSARequestLog();
+		requestLog.setFilename(new File(Log_Directory, "jetty-yyyy_mm_dd.request.log").getAbsolutePath());
+		requestLog.setFilenameDateFormat("yyyy_MM_dd");
+		requestLog.setRetainDays(90);
+		requestLog.setAppend(true);
+		requestLog.setExtended(true);
+		requestLog.setLogCookies(false);
+		requestLog.setLogTimeZone("GMT");
+		
 		logHandler.setRequestLog(requestLog);
 
 		context.setHandler(logHandler);

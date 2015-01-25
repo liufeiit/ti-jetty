@@ -1,0 +1,7 @@
+
+curl -o jetty-all.jar http://central.maven.org/maven2/org/eclipse/jetty/aggregate/jetty-all/9.2.8-SNAPSHOT/jetty-all-9.2.8-SNAPSHOT.jar
+
+curl -o servlet-api.jar http://central.maven.org/maven2/javax/servlet/javax.servlet-api/3.1.0/javax.servlet-api-3.1.0.jar
+
+javac -cp servlet-api.jar:jetty-all.jar HelloWorld.java
+java -cp .:servlet-api.jar:jetty-all.jar HelloWorld

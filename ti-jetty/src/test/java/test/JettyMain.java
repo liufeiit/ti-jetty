@@ -1,7 +1,9 @@
 package test;
 
 import java.io.File;
+import java.lang.management.ManagementFactory;
 
+import org.eclipse.jetty.jmx.MBeanContainer;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.NCSARequestLog;
 import org.eclipse.jetty.server.Server;
@@ -29,7 +31,7 @@ public class JettyMain {
 
 	public static void main22(String[] args) throws Exception {
 		Server server = new Server();
-
+		server.addBean(new MBeanContainer(ManagementFactory.getPlatformMBeanServer()));
 		SelectChannelConnector connector = new SelectChannelConnector();
 		connector.setHost("127.0.0.1");
 		connector.setPort(8080);
@@ -60,14 +62,25 @@ public class JettyMain {
 
 		SessionManager sessionHandler = new HashSessionManager();
 		context.setSessionHandler(new SessionHandler(sessionHandler));
+
 		
-        NCSARequestLog requestLog = new NCSARequestLog(System.getProperty("user.dir") + "/itemp/NCSA.log");
-        requestLog.setExtended(false);
-		RequestLogHandler log = new RequestLogHandler();
-		log.setRequestLog(requestLog);
-		context.setHandler(log);
-		
+		NCSARequestLog requestLog = new NCSARequestLog(System.getProperty("user.dir") + "/logs/yyyy_mm_dd.request.log");
+		requestLog.setFilename(System.getProperty("user.dir") + "/logs/yyyy_mm_dd.request.log");
+		requestLog.setFilenameDateFormat("yyyy_MM_dd");
+		requestLog.setRetainDays(90);
+		requestLog.setAppend(true);
+		requestLog.setExtended(true);
+		requestLog.setLogCookies(false);
+		requestLog.setLogTimeZone("GMT");
+		RequestLogHandler requestLogHandler = new RequestLogHandler();
+		requestLogHandler.setRequestLog(requestLog);
+
+		context.setHandler(requestLogHandler);
+
 		server.setHandler(context);
+		
+//		ConnectorStatistics.addToAllConnectors(server);
+		
 		server.start();
 		server.join();
 		System.err.println("Jetty Server started.");
@@ -77,7 +90,7 @@ public class JettyMain {
 		Server server = new Server(8080);
 		ResourceHandler resourceHandler = new ResourceHandler();
 		resourceHandler.setDirectoriesListed(true);
-		resourceHandler.setWelcomeFiles(new String[] { "index.html"});
+		resourceHandler.setWelcomeFiles(new String[] { "index.html" });
 		resourceHandler.setResourceBase("/Users/yp");
 		resourceHandler.setStylesheet("");
 		resourceHandler.setEtags(true);
