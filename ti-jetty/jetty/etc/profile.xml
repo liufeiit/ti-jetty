@@ -2,28 +2,36 @@
 <server>
 	<port>8080</port>
 	<context-path>/</context-path>
-	<use-session>false</use-session>
-	<!--<war>/root/apps/scape_api/scape-api.war</war>-->
-	<war>F://dev/workspace/scape/scape/api/target/scape-api</war>
+	<cluster>false</cluster>
+	<war>/root/apps/scape_api/scape-api.war</war>
 	<connector>
 		<accept-queue-size>100</accept-queue-size>
 		<max-idle-time>5000</max-idle-time>
 	</connector>
-	<thread-pool>
-		<name>Jetty.ThreadPool.CFC.0001</name>
+	<queued>
+		<name>Jetty.QueuedThreadPool.0001</name>
 		<min-threads>5</min-threads>
 		<max-threads>200</max-threads>
 		<max-queued>50</max-queued>
 		<max-idle-time-ms>5000</max-idle-time-ms>
 		<max-stop-time-ms>5000</max-stop-time-ms>
-	</thread-pool>
+	</queued>
+	<session>
+		<domain>127.0.0.1</domain>
+		<path>/</path>
+		<max-age>86400</max-age>
+		<refresh-cookie-age>300</refresh-cookie-age>
+		<worker-name>node_001</worker-name>
+		<save-interval>10</save-interval>
+		<scavenger-interval>30000</scavenger-interval>
+	</session>
 	<redis>
-		<redis-host>127.0.0.1</redis-host>
-		<redis-port>6379</redis-port>
-		<redis-max-active>500</redis-max-active>
-		<redis-min-idle>5</redis-min-idle>
-		<redis-max-idle>20</redis-max-idle>
-		<redis-max-wait>10000</redis-max-wait>
-		<redis-timeout>3000</redis-timeout>
+		<host>127.0.0.1</host>
+		<port>6379</port>
+		<max-active>500</max-active>
+		<min-idle>5</min-idle>
+		<max-idle>20</max-idle>
+		<max-wait>10000</max-wait>
+		<timeout>3000</timeout>
 	</redis>
 </server>
