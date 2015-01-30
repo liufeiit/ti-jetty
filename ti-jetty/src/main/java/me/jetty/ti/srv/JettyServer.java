@@ -6,6 +6,7 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import me.jetty.ti.etc.JettyProfile;
+import me.jetty.ti.ns.NsRegistry;
 
 import org.eclipse.jetty.server.NCSARequestLog;
 import org.eclipse.jetty.server.Server;
@@ -44,7 +45,7 @@ public class JettyServer {
 	private Server server;
 
 	private AtomicBoolean started = new AtomicBoolean(false);
-	
+
 	public static void main(String[] args) {
 		System.out.println(String.valueOf(new BigDecimal(0.01D)));
 	}
@@ -67,25 +68,28 @@ public class JettyServer {
 			log.warn("Jetty Server has been started.");
 			return;
 		}
+
+		JettyProfile profile = NsRegistry.DEFAULT_NS_REGISTRY.newInstance(JettyProfile.class);
+
 		server = new Server();
 
 		SelectChannelConnector connector = new SelectChannelConnector();
-		connector.setPort(JettyProfile.Server_Port);
-		connector.setAcceptQueueSize(JettyProfile.Connector_AcceptQueueSize);
+		connector.setPort(profile.getPort());
+		connector.setAcceptQueueSize(profile.getAcceptQueueSize());
 		connector.setAcceptors(Runtime.getRuntime().availableProcessors() * 2);
-		connector.setMaxIdleTime(JettyProfile.Connector_MaxIdleTime);
+		connector.setMaxIdleTime(profile.getMaxIdleTime());
 		// 注册连接器
 		server.addConnector(connector);
 
 		QueuedThreadPool threadPool = new QueuedThreadPool();
-		threadPool.setMaxThreads(JettyProfile.Thread_MaxThreads);
-		threadPool.setMinThreads(JettyProfile.Thread_MinThreads);
-		threadPool.setMaxQueued(JettyProfile.Thread_MaxQueued);
-		threadPool.setMaxStopTimeMs(JettyProfile.Thread_MaxStopTimeMs);
-		threadPool.setMaxIdleTimeMs(JettyProfile.Thread_MaxIdleTimeMs);
+		threadPool.setMaxThreads(profile.getQueuedMaxThreads());
+		threadPool.setMinThreads(profile.getQueuedMinThreads());
+		threadPool.setMaxQueued(profile.getQueuedMaxQueued());
+		threadPool.setMaxStopTimeMs(profile.getQueuedMaxStopTimeMs());
+		threadPool.setMaxIdleTimeMs(profile.getQueuedMaxIdleTimeMs());
 		threadPool.setDaemon(true);
 		threadPool.setDetailedDump(true);
-		threadPool.setName(JettyProfile.Thread_Name);
+		threadPool.setName(profile.getQueuedName());
 		threadPool.setThreadsPriority(Thread.NORM_PRIORITY);
 		// 注册请求处理线程池
 		server.setThreadPool(threadPool);
@@ -93,8 +97,8 @@ public class JettyServer {
 		// 设置web应用信息.
 		WebApp context = new WebApp(WebApp.SESSIONS | WebApp.SECURITY);
 
-		context.setContextPath(JettyProfile.App_ContextPath);
-		context.setWar(JettyProfile.App_War);
+		context.setContextPath(profile.getContextPath());
+		context.setWar(profile.getWar());
 		context.setParentLoaderPriority(true);
 		context.setExtractWAR(true);
 
@@ -106,21 +110,21 @@ public class JettyServer {
 
 		SessionManager sessionManager;
 		SessionIdManager sessionIdManager;
-		if (JettyProfile.App_Use_Sessions) {
+		if (profile.isRequireSession()) {
 			// 设置session集群redis服务
 			JedisPoolConfig poolConfig = new JedisPoolConfig();
-			poolConfig.setMaxActive(JettyProfile.Redis_MaxActive);
-			poolConfig.setMinIdle(JettyProfile.Redis_MinIdle);
-			poolConfig.setMaxIdle(JettyProfile.Redis_MaxIdle);
-			poolConfig.setMaxWait(JettyProfile.Redis_MaxWait);
-			JedisPool pool = new JedisPool(poolConfig, JettyProfile.Redis_Host, JettyProfile.Redis_Port,
-					JettyProfile.Redis_Timeout);
+			poolConfig.setMaxActive(profile.getRedisMaxActive());
+			poolConfig.setMinIdle(profile.getRedisMinIdle());
+			poolConfig.setMaxIdle(profile.getRedisMaxIdle());
+			poolConfig.setMaxWait(profile.getRedisMaxWait());
+
+			JedisPool pool = new JedisPool(poolConfig, profile.getRedisHost(), profile.getRedisPort(), profile.getRedisTimeout());
 
 			sessionManager = new RedisSessionManager(pool, new JsonSerializer());
 
 			((RedisSessionManager) sessionManager).setSaveInterval(20);
 			((RedisSessionManager) sessionManager).setSessionDomain("127.0.0.1");
-			((RedisSessionManager) sessionManager).setSessionPath(JettyProfile.App_ContextPath);
+			((RedisSessionManager) sessionManager).setSessionPath(profile.getContextPath());
 			((RedisSessionManager) sessionManager).setMaxCookieAge(86400);
 			((RedisSessionManager) sessionManager).setRefreshCookieAge(300);
 
@@ -148,21 +152,21 @@ public class JettyServer {
 		requestLog.setExtended(true);
 		requestLog.setLogCookies(false);
 		requestLog.setLogTimeZone("GMT");
-		
+
 		logHandler.setRequestLog(requestLog);
 
 		context.setHandler(logHandler);
 		server.setHandler(context);
 
-		log.info("Starting Jetty Server ...\n" + " Listen Port : " + JettyProfile.Server_Port);
+		log.info("Starting Jetty Server ...\n" + " Listen Port : " + profile.getPort());
 
 		server.setStopAtShutdown(true);
 		server.setSendServerVersion(true);
 
 		server.start();
 		started.set(true);
-//		server.dumpStdErr();
-		log.info("Jetty Server Started Success.\n" + " Listen Port : " + JettyProfile.Server_Port);
+		server.dumpStdErr();
+		log.info("Jetty Server Started Success.\n" + " Listen Port : " + profile.getPort());
 
 		server.join();
 
@@ -189,7 +193,6 @@ public class JettyServer {
 
 	private String guid() {
 		String guid = UUID.randomUUID().toString();
-		return System.currentTimeMillis() + "_" + guid.substring(0, 8) + guid.substring(9, 13) + guid.substring(14, 18)
-				+ guid.substring(19, 23) + guid.substring(24);
+		return System.currentTimeMillis() + "_" + guid.substring(0, 8) + guid.substring(9, 13) + guid.substring(14, 18) + guid.substring(19, 23) + guid.substring(24);
 	}
 }

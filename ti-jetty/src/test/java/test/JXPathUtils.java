@@ -12,6 +12,8 @@ import org.apache.commons.jxpath.xml.DocumentContainer;
  * @since 2015年1月28日 下午8:01:23
  */
 public class JXPathUtils {
+	
+	public int port;
 
 	public static void main(String[] args) throws Exception {
 		Container container = new DocumentContainer(JXPathUtils.class.getResource("/profile.xml"));

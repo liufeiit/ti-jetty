@@ -1,92 +1,227 @@
 package me.jetty.ti.etc;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.nio.charset.Charset;
+import me.jetty.ti.jx.XPath;
+import me.jetty.ti.jx.XRoot;
+import me.jetty.ti.ns.NsRegistry;
 
-import me.jetty.ti.utils.StreamUtils;
-
-import org.apache.commons.lang3.math.NumberUtils;
-import org.dom4j.Document;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Element;
-import org.eclipse.jetty.util.log.Log;
-import org.eclipse.jetty.util.log.Logger;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
  * 
- * @author john.liu E-mail:fei.liu@yeepay.com
+ * @author fei.liu E-mail:fei.liu@andpay.me
+ * 
  * @version 1.0.0
- * @since 2015年1月12日 下午2:25:49
+ * @since 2015年1月30日 下午1:55:34
  */
+@XRoot("/Users/yp/workspace/ti-jetty/ti-jetty/etc/profile.xml")
 public class JettyProfile {
 
-	final static Logger log = Log.getLogger(JettyProfile.class);
+	@XPath("/server/port")
+	private int port;
 
-	public static int 		Server_Port;
-	
-	public static String 	App_ContextPath;
-	public static String 	App_War;
-	
-	public static boolean 	App_Use_Sessions;
-	
-	/**每个请求被accept前允许等待的连接数**/
-	public static int 		Connector_AcceptQueueSize;
-	/**连接最大空闲时间，默认是200000，-1表示一直连接**/
-	public static int 		Connector_MaxIdleTime;
+	@XPath("/server/context-path")
+	private String contextPath;
+	@XPath("/server/war")
+	private String war;
 
-	public static String 	Thread_Name;
-	public static int 		Thread_MinThreads;
-	public static int 		Thread_MaxThreads;
-	public static int 		Thread_MaxQueued;
-	public static int 		Thread_MaxIdleTimeMs;
-	public static int 		Thread_MaxStopTimeMs;
-	
-	public static String 	Redis_Host;
-	public static int 		Redis_Port;
-	public static int 		Redis_MaxActive;
-	public static int 		Redis_MinIdle;
-	public static int 		Redis_MaxIdle;
-	public static long 		Redis_MaxWait;
-	public static int 		Redis_Timeout;
-	
-	static {
-		try {
-			File etc = new File("../etc/profile.xml");
-			String xml = StreamUtils.copyToString(new FileInputStream(etc), Charset.forName("UTF-8"));
-			Document document = DocumentHelper.parseText(xml);
-			Element root = document.getRootElement();
-			
-			JettyProfile.Server_Port = NumberUtils.toInt(root.elementTextTrim("port"), 8080);
-			
-			JettyProfile.App_ContextPath = root.elementTextTrim("context-path");
-			JettyProfile.App_War = root.elementTextTrim("war");
-			
-			JettyProfile.App_Use_Sessions = Boolean.parseBoolean(root.elementTextTrim("use-session"));
-			
-			Element connector = root.element("connector");
-			JettyProfile.Connector_AcceptQueueSize = NumberUtils.toInt(connector.elementTextTrim("accept-queue-size"), 100);
-			JettyProfile.Connector_MaxIdleTime = NumberUtils.toInt(connector.elementTextTrim("max-idle-time"), 5000);
+	@XPath("/server/require-session")
+	private boolean requireSession;
 
-			Element threadPool = root.element("thread-pool");
-			JettyProfile.Thread_Name = threadPool.elementTextTrim("name");
-			JettyProfile.Thread_MinThreads = NumberUtils.toInt(threadPool.elementTextTrim("min-threads"), 5);
-			JettyProfile.Thread_MaxThreads = NumberUtils.toInt(threadPool.elementTextTrim("max-threads"), 200);
-			JettyProfile.Thread_MaxQueued = NumberUtils.toInt(threadPool.elementTextTrim("max-queued"), 50);
-			JettyProfile.Thread_MaxIdleTimeMs = NumberUtils.toInt(threadPool.elementTextTrim("max-idle-time-ms"), 5000);
-			JettyProfile.Thread_MaxStopTimeMs = NumberUtils.toInt(threadPool.elementTextTrim("max-stop-time-ms"), 5000);
+	/** 每个请求被accept前允许等待的连接数 **/
+	@XPath("/server/connector/accept-queue-size")
+	private int acceptQueueSize;
+	/** 连接最大空闲时间，默认是200000，-1表示一直连接 **/
+	@XPath("/server/connector/max-idle-time")
+	private int maxIdleTime;
 
-			Element cluster = root.element("redis");
-			JettyProfile.Redis_Host = cluster.elementTextTrim("redis-host");
-			JettyProfile.Redis_Port = NumberUtils.toInt(cluster.elementTextTrim("redis-port"), 6379);
-			JettyProfile.Redis_MaxActive = NumberUtils.toInt(cluster.elementTextTrim("redis-max-active"), 500);
-			JettyProfile.Redis_MinIdle = NumberUtils.toInt(cluster.elementTextTrim("redis-min-idle"), 5);
-			JettyProfile.Redis_MaxIdle = NumberUtils.toInt(cluster.elementTextTrim("redis-max-idle"), 20);
-			JettyProfile.Redis_MaxWait = NumberUtils.toLong(cluster.elementTextTrim("redis-max-wait"), 10000L);
-			JettyProfile.Redis_Timeout = NumberUtils.toInt(cluster.elementTextTrim("redis-timeout"), 3000);
-			
-		} catch (Exception e) {
-			log.warn("Parse Server Config Error.", e);
-		}
+	@XPath("/server/queued/name")
+	private String queuedName;
+	@XPath("/server/queued/min-threads")
+	private int queuedMinThreads;
+	@XPath("/server/queued/max-threads")
+	private int queuedMaxThreads;
+	@XPath("/server/queued/max-queued")
+	private int queuedMaxQueued;
+	@XPath("/server/queued/max-idle-time-ms")
+	private int queuedMaxIdleTimeMs;
+	@XPath("/server/queued/max-stop-time-ms")
+	private int queuedMaxStopTimeMs;
+
+	@XPath("/server/redis/host")
+	private String redisHost;
+	@XPath("/server/redis/port")
+	private int redisPort;
+	@XPath("/server/redis/max-active")
+	private int redisMaxActive;
+	@XPath("/server/redis/min-idle")
+	private int redisMinIdle;
+	@XPath("/server/redis/max-idle")
+	private int redisMaxIdle;
+	@XPath("/server/redis/max-wait")
+	private long redisMaxWait;
+	@XPath("/server/redis/timeout")
+	private int redisTimeout;
+
+	public static void main(String[] args) {
+		JettyProfile profile = NsRegistry.DEFAULT_NS_REGISTRY.newInstance(JettyProfile.class);
+		System.out.println(profile);
+	}
+
+	public int getPort() {
+		return port;
+	}
+
+	public void setPort(int port) {
+		this.port = port;
+	}
+
+	public String getContextPath() {
+		return contextPath;
+	}
+
+	public void setContextPath(String contextPath) {
+		this.contextPath = contextPath;
+	}
+
+	public String getWar() {
+		return war;
+	}
+
+	public void setWar(String war) {
+		this.war = war;
+	}
+
+	public boolean isRequireSession() {
+		return requireSession;
+	}
+
+	public void setRequireSession(boolean requireSession) {
+		this.requireSession = requireSession;
+	}
+
+	public int getAcceptQueueSize() {
+		return acceptQueueSize;
+	}
+
+	public void setAcceptQueueSize(int acceptQueueSize) {
+		this.acceptQueueSize = acceptQueueSize;
+	}
+
+	public int getMaxIdleTime() {
+		return maxIdleTime;
+	}
+
+	public void setMaxIdleTime(int maxIdleTime) {
+		this.maxIdleTime = maxIdleTime;
+	}
+
+	public String getQueuedName() {
+		return queuedName;
+	}
+
+	public void setQueuedName(String queuedName) {
+		this.queuedName = queuedName;
+	}
+
+	public int getQueuedMinThreads() {
+		return queuedMinThreads;
+	}
+
+	public void setQueuedMinThreads(int queuedMinThreads) {
+		this.queuedMinThreads = queuedMinThreads;
+	}
+
+	public int getQueuedMaxThreads() {
+		return queuedMaxThreads;
+	}
+
+	public void setQueuedMaxThreads(int queuedMaxThreads) {
+		this.queuedMaxThreads = queuedMaxThreads;
+	}
+
+	public int getQueuedMaxQueued() {
+		return queuedMaxQueued;
+	}
+
+	public void setQueuedMaxQueued(int queuedMaxQueued) {
+		this.queuedMaxQueued = queuedMaxQueued;
+	}
+
+	public int getQueuedMaxIdleTimeMs() {
+		return queuedMaxIdleTimeMs;
+	}
+
+	public void setQueuedMaxIdleTimeMs(int queuedMaxIdleTimeMs) {
+		this.queuedMaxIdleTimeMs = queuedMaxIdleTimeMs;
+	}
+
+	public int getQueuedMaxStopTimeMs() {
+		return queuedMaxStopTimeMs;
+	}
+
+	public void setQueuedMaxStopTimeMs(int queuedMaxStopTimeMs) {
+		this.queuedMaxStopTimeMs = queuedMaxStopTimeMs;
+	}
+
+	public String getRedisHost() {
+		return redisHost;
+	}
+
+	public void setRedisHost(String redisHost) {
+		this.redisHost = redisHost;
+	}
+
+	public int getRedisPort() {
+		return redisPort;
+	}
+
+	public void setRedisPort(int redisPort) {
+		this.redisPort = redisPort;
+	}
+
+	public int getRedisMaxActive() {
+		return redisMaxActive;
+	}
+
+	public void setRedisMaxActive(int redisMaxActive) {
+		this.redisMaxActive = redisMaxActive;
+	}
+
+	public int getRedisMinIdle() {
+		return redisMinIdle;
+	}
+
+	public void setRedisMinIdle(int redisMinIdle) {
+		this.redisMinIdle = redisMinIdle;
+	}
+
+	public int getRedisMaxIdle() {
+		return redisMaxIdle;
+	}
+
+	public void setRedisMaxIdle(int redisMaxIdle) {
+		this.redisMaxIdle = redisMaxIdle;
+	}
+
+	public long getRedisMaxWait() {
+		return redisMaxWait;
+	}
+
+	public void setRedisMaxWait(long redisMaxWait) {
+		this.redisMaxWait = redisMaxWait;
+	}
+
+	public int getRedisTimeout() {
+		return redisTimeout;
+	}
+
+	public void setRedisTimeout(int redisTimeout) {
+		this.redisTimeout = redisTimeout;
+	}
+
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
 	}
 }
