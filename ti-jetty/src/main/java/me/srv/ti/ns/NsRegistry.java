@@ -1,4 +1,4 @@
-package me.jetty.ti.ns;
+package me.srv.ti.ns;
 
 /**
  * 

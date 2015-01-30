@@ -1,4 +1,4 @@
-package me.jetty.ti.srv;
+package me.srv.ti.srv;
 
 import org.eclipse.jetty.security.SecurityHandler;
 import org.eclipse.jetty.server.HandlerContainer;

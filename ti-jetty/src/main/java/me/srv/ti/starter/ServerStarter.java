@@ -1,4 +1,4 @@
-package me.jetty.ti.starter;
+package me.srv.ti.starter;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -42,7 +42,7 @@ public class ServerStarter {
 		unpackArchives(libDir, true);
 		ClassLoader loader = new JettyClassLoader(parent, libDir);
 		Thread.currentThread().setContextClassLoader(loader);
-		Class serverClass = loader.loadClass("me.jetty.ti.srv.JettyStarter");
+		Class serverClass = loader.loadClass("me.srv.ti.srv.JettyStarter");
 		serverClass.newInstance();
 	}
 

@@ -1,4 +1,6 @@
-package me.jetty.ti.srv;
+package me.srv.ti.starter;
+
+import me.srv.ti.srv.JettyServer;
 
 import org.eclipse.jetty.util.log.Log;
 import org.eclipse.jetty.util.log.Logger;

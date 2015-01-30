@@ -1,11 +1,11 @@
-package me.jetty.ti.ns;
+package me.srv.ti.ns;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
-import me.jetty.ti.jx.XPath;
-import me.jetty.ti.jx.XRoot;
+import me.srv.ti.jx.XPath;
+import me.srv.ti.jx.XRoot;
 
 import org.apache.commons.jxpath.JXPathContext;
 import org.apache.commons.jxpath.xml.DocumentContainer;

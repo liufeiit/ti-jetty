@@ -2,9 +2,8 @@
 <server>
 	<port>8080</port>
 	<context-path>/</context-path>
-	<require-session>false</require-session>
-	<!--<war>/root/apps/scape_api/scape-api.war</war>-->
-	<war>F://dev/workspace/scape/scape/api/target/scape-api</war>
+	<cluster>false</cluster>
+	<war>/root/apps/scape_api/scape-api.war</war>
 	<connector>
 		<accept-queue-size>100</accept-queue-size>
 		<max-idle-time>5000</max-idle-time>
@@ -17,6 +16,15 @@
 		<max-idle-time-ms>5000</max-idle-time-ms>
 		<max-stop-time-ms>5000</max-stop-time-ms>
 	</queued>
+	<session>
+		<domain>127.0.0.1</domain>
+		<path>/</path>
+		<max-age>86400</max-age>
+		<refresh-cookie-age>300</refresh-cookie-age>
+		<worker-name>node.001</worker-name>
+		<save-interval>10</save-interval>
+		<scavenger-interval>30000</scavenger-interval>
+	</session>
 	<redis>
 		<host>127.0.0.1</host>
 		<port>6379</port>

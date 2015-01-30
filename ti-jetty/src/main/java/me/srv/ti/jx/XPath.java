@@ -1,4 +1,4 @@
-package me.jetty.ti.jx;
+package me.srv.ti.jx;
 
 import java.lang.annotation.Target;
 import java.lang.annotation.Retention;

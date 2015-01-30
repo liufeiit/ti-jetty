@@ -1,8 +1,7 @@
-package me.jetty.ti.etc;
+package me.srv.ti.etc;
 
-import me.jetty.ti.jx.XPath;
-import me.jetty.ti.jx.XRoot;
-import me.jetty.ti.ns.NsRegistry;
+import me.srv.ti.jx.XPath;
+import me.srv.ti.jx.XRoot;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -25,8 +24,8 @@ public class JettyProfile {
 	@XPath("/server/war")
 	private String war;
 
-	@XPath("/server/require-session")
-	private boolean requireSession;
+	@XPath("/server/cluster")
+	private boolean cluster;
 
 	/** 每个请求被accept前允许等待的连接数 **/
 	@XPath("/server/connector/accept-queue-size")
@@ -63,11 +62,21 @@ public class JettyProfile {
 	@XPath("/server/redis/timeout")
 	private int redisTimeout;
 
-	public static void main(String[] args) {
-		JettyProfile profile = NsRegistry.DEFAULT_NS_REGISTRY.newInstance(JettyProfile.class);
-		System.out.println(profile);
-	}
-
+	@XPath("/server/session/domain")
+	private String sessionDomain;
+	@XPath("/server/session/path")
+	private String sessionPath;
+	@XPath("/server/session/max-age")
+	private int sessionMaxAge;
+	@XPath("/server/session/refresh-cookie-age")
+	private int sessionAgeInSeconds;
+	@XPath("/server/session/worker-name")
+	private String sessionWorkerName;
+	@XPath("/server/session/save-interval")
+	private long sessionSaveInterval;
+	@XPath("/server/session/scavenger-interval")
+	private long sessionScavengerInterval;
+	
 	public int getPort() {
 		return port;
 	}
@@ -92,12 +101,12 @@ public class JettyProfile {
 		this.war = war;
 	}
 
-	public boolean isRequireSession() {
-		return requireSession;
+	public boolean isCluster() {
+		return cluster;
 	}
 
-	public void setRequireSession(boolean requireSession) {
-		this.requireSession = requireSession;
+	public void setCluster(boolean cluster) {
+		this.cluster = cluster;
 	}
 
 	public int getAcceptQueueSize() {
@@ -218,6 +227,62 @@ public class JettyProfile {
 
 	public void setRedisTimeout(int redisTimeout) {
 		this.redisTimeout = redisTimeout;
+	}
+
+	public String getSessionDomain() {
+		return sessionDomain;
+	}
+
+	public void setSessionDomain(String sessionDomain) {
+		this.sessionDomain = sessionDomain;
+	}
+
+	public String getSessionPath() {
+		return sessionPath;
+	}
+
+	public void setSessionPath(String sessionPath) {
+		this.sessionPath = sessionPath;
+	}
+
+	public int getSessionMaxAge() {
+		return sessionMaxAge;
+	}
+
+	public void setSessionMaxAge(int sessionMaxAge) {
+		this.sessionMaxAge = sessionMaxAge;
+	}
+
+	public int getSessionAgeInSeconds() {
+		return sessionAgeInSeconds;
+	}
+
+	public void setSessionAgeInSeconds(int sessionAgeInSeconds) {
+		this.sessionAgeInSeconds = sessionAgeInSeconds;
+	}
+
+	public String getSessionWorkerName() {
+		return sessionWorkerName;
+	}
+
+	public void setSessionWorkerName(String sessionWorkerName) {
+		this.sessionWorkerName = sessionWorkerName;
+	}
+
+	public long getSessionSaveInterval() {
+		return sessionSaveInterval;
+	}
+
+	public void setSessionSaveInterval(long sessionSaveInterval) {
+		this.sessionSaveInterval = sessionSaveInterval;
+	}
+
+	public long getSessionScavengerInterval() {
+		return sessionScavengerInterval;
+	}
+
+	public void setSessionScavengerInterval(long sessionScavengerInterval) {
+		this.sessionScavengerInterval = sessionScavengerInterval;
 	}
 
 	@Override

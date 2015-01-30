@@ -1,4 +1,4 @@
-package me.jetty.ti.utils;
+package me.srv.ti.utils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FilterInputStream;
