@@ -7,9 +7,8 @@ import java.lang.reflect.Method;
 
 import me.srv.ti.jx.XPath;
 import me.srv.ti.jx.XRoot;
+import me.srv.ti.utils.BeanUtils;
 
-import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.jxpath.JXPathContext;
 import org.apache.commons.jxpath.xml.DocumentContainer;
 import org.apache.commons.lang3.StringUtils;
@@ -51,14 +50,15 @@ public class XNsRegistry implements NsRegistry {
 		}
 		String root = xroot.value();
 		log.debug("读取XPath配置信息 " + root);
-		JXPathContext context = null;
+		JXPathContext repository = null;
 		try {
-			context = JXPathContext.newContext(new DocumentContainer(new File(root).toURI().toURL()));
+			repository = JXPathContext.newContext(new DocumentContainer(new File(root).toURI().toURL()));
 		} catch (Exception e) {
 			log.info("读取XPath配置信息异常.", e);
 			return null;
 		}
-		PropertyDescriptor[] pds = PropertyUtils.getPropertyDescriptors(xclass);
+		JXPathContext context = JXPathContext.newContext(bean);
+		PropertyDescriptor[] pds = BeanUtils.getPropertyDescriptors(xclass);
 		for (PropertyDescriptor propertyDescriptor : pds) {
 			XPath xpath = null;
 			String name = propertyDescriptor.getName();
@@ -71,7 +71,7 @@ public class XNsRegistry implements NsRegistry {
 			}
 			xpath = method.getAnnotation(XPath.class);
 			if (xpath == null) {
-				Field field = findField(xclass, name);
+				Field field = BeanUtils.findField(xclass, name);
 				if (field == null) {
 					continue;
 				}
@@ -84,25 +84,11 @@ public class XNsRegistry implements NsRegistry {
 			String path = xpath.value();
 			log.debug("设置属性值:" + path);
 			try {
-				BeanUtils.setProperty(bean, name, context.getValue(path));
+				context.setValue(name, repository.getValue(path));
 			} catch (Exception e) {
 				log.info("Invoking Method[" + method + "] Error.", e);
 			}
 		}
 		return bean;
-	}
-
-	public static Field findField(Class<?> clazz, String name) {
-		Class<?> searchType = clazz;
-		while (!Object.class.equals(searchType) && searchType != null) {
-			Field[] fields = searchType.getDeclaredFields();
-			for (Field field : fields) {
-				if (name == null || name.equals(field.getName())) {
-					return field;
-				}
-			}
-			searchType = searchType.getSuperclass();
-		}
-		return null;
 	}
 }

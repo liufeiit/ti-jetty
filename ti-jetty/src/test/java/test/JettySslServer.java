@@ -1,5 +1,12 @@
 package test;
 
+import java.util.Properties;
+
+import javax.naming.NamingException;
+
+import me.srv.ti.srv.WebApp;
+
+import org.eclipse.jetty.jndi.factories.MailSessionReference;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ssl.SslSelectChannelConnector;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
@@ -27,5 +34,18 @@ public class JettySslServer {
 		server.addConnector(connector);
 		server.start();
 		server.join();
+	}
+
+	void setMailJndiResource(WebApp context) throws NamingException {
+		MailSessionReference mailref = new MailSessionReference();
+		mailref.setUser("CHANGE-ME");
+		mailref.setPassword("CHANGE-ME");
+		Properties props = new Properties();
+		props.put("mail.smtp.auth", "false");
+		props.put("mail.smtp.host", "CHANGE-ME");
+		props.put("mail.from", "CHANGE-ME");
+		props.put("mail.debug", "false");
+		mailref.setProperties(props);
+		new org.eclipse.jetty.plus.jndi.Resource(context, "mail/Session", mailref);
 	}
 }

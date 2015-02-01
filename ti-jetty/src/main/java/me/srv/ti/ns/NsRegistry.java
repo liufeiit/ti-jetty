@@ -14,5 +14,6 @@ public interface NsRegistry {
 	String GET_PREFIX = "get";
     String SET_PREFIX = "set";
     String IS_PREFIX = "is";
+    
 	<T> T newInstance(Class<T> xclass);
 }

@@ -1,23 +1,14 @@
 package me.srv.ti.srv;
 
 import java.io.File;
+import java.lang.management.ManagementFactory;
 
-import org.eclipse.jetty.server.NCSARequestLog;
+import org.eclipse.jetty.jmx.MBeanContainer;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.handler.RequestLogHandler;
 import org.eclipse.jetty.server.nio.SelectChannelConnector;
-import org.eclipse.jetty.server.session.AbstractSessionIdManager;
-import org.eclipse.jetty.server.session.AbstractSessionManager;
-import org.eclipse.jetty.server.session.HashSessionIdManager;
-import org.eclipse.jetty.server.session.HashSessionManager;
-import org.eclipse.jetty.server.session.SessionHandler;
+import org.eclipse.jetty.server.ssl.SslSelectChannelConnector;
+import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
-
-import redis.clients.jedis.JedisPool;
-
-import com.ovea.jetty.session.redis.RedisSessionIdManager;
-import com.ovea.jetty.session.redis.RedisSessionManager;
-import com.ovea.jetty.session.serializer.JsonSerializer;
 
 /**
  * 
@@ -35,14 +26,34 @@ public class JettyServer extends AbstractServer {
 
 	protected void start0() throws Exception {
 		server = new Server();
-		
-		SelectChannelConnector connector = new SelectChannelConnector();
-		connector.setPort(profile.getPort());
-		connector.setAcceptQueueSize(profile.getAcceptQueueSize());
-		connector.setAcceptors(Runtime.getRuntime().availableProcessors() * 2);
-		connector.setMaxIdleTime(profile.getMaxIdleTime());
-		
-		server.addConnector(connector);
+
+		MBeanContainer mbContainer = new MBeanContainer(ManagementFactory.getPlatformMBeanServer());
+		server.addBean(mbContainer);
+
+		new org.eclipse.jetty.plus.jndi.EnvEntry(server, "version", "1.0.0-Final", false);
+
+		if(profile.isSsl()) {
+			SslSelectChannelConnector connector = new SslSelectChannelConnector();
+			connector.setPort(profile.getPort());
+			connector.setAcceptQueueSize(profile.getAcceptQueueSize());
+			connector.setAcceptors(Runtime.getRuntime().availableProcessors() * 2);
+			connector.setMaxIdleTime(profile.getMaxIdleTime());
+			
+			SslContextFactory sslContextFactory = connector.getSslContextFactory();
+			sslContextFactory.setKeyStorePath(profile.getKeyStorePath());
+			sslContextFactory.setKeyStorePassword(profile.getKeyStorePassword());
+			sslContextFactory.setKeyManagerPassword(profile.getKeyManagerPassword());
+			
+			server.addConnector(connector);
+		} else {
+			SelectChannelConnector connector = new SelectChannelConnector();
+			connector.setPort(profile.getPort());
+			connector.setAcceptQueueSize(profile.getAcceptQueueSize());
+			connector.setAcceptors(Runtime.getRuntime().availableProcessors() * 2);
+			connector.setMaxIdleTime(profile.getMaxIdleTime());
+
+			server.addConnector(connector);
+		}
 
 		QueuedThreadPool threadPool = new QueuedThreadPool();
 		threadPool.setMaxThreads(profile.getQueuedMaxThreads());
@@ -54,13 +65,13 @@ public class JettyServer extends AbstractServer {
 		threadPool.setDetailedDump(true);
 		threadPool.setName(profile.getQueuedName());
 		threadPool.setThreadsPriority(Thread.NORM_PRIORITY);
-		
+
 		server.setThreadPool(threadPool);
 
-		WebApp context = new WebApp(WebApp.SESSIONS | WebApp.SECURITY);
+		WebApp context = WebApp.newInstance(profile.isSessions());
 
 		context.setContextPath(profile.getContextPath());
-		context.setWar(profile.getWar());
+		context.setWar(new File(profile.getWar()).getAbsolutePath());
 		context.setParentLoaderPriority(true);
 		context.setExtractWAR(true);
 
@@ -68,44 +79,15 @@ public class JettyServer extends AbstractServer {
 		if (!tmp.exists()) {
 			tmp.mkdirs();
 		}
-		
+
 		context.setTempDirectory(tmp);
 
-		AbstractSessionManager sessionManager;
-		AbstractSessionIdManager sessionIdManager;
-		if (profile.isCluster()) {
-			JedisPool pool = createRedisConnectionPool(profile);
-			sessionManager = new RedisSessionManager(pool, new JsonSerializer());
-			((RedisSessionManager) sessionManager).setSaveInterval(profile.getSessionSaveInterval());
-			sessionIdManager = new RedisSessionIdManager(server, pool);
-			((RedisSessionIdManager) sessionIdManager).setScavengerInterval(profile.getSessionScavengerInterval());
-		} else {
-			sessionManager = new HashSessionManager();
-			sessionIdManager = new HashSessionIdManager();
+		if (profile.isSessions()) {
+			setSessionHandler(server, context);
 		}
 
-		sessionManager.getSessionCookieConfig().setDomain(profile.getSessionDomain());
-		sessionManager.getSessionCookieConfig().setPath(profile.getSessionPath());
-		sessionManager.getSessionCookieConfig().setMaxAge(profile.getSessionMaxAge());
-		sessionManager.setRefreshCookieAge(profile.getSessionAgeInSeconds());
-		sessionIdManager.setWorkerName(profile.getSessionWorkerName());
+		setLogHandler(context);
 
-		sessionManager.setSessionIdManager(sessionIdManager);
-		SessionHandler sessionHandler = new SessionHandler(sessionManager);
-		context.setSessionHandler(sessionHandler);
-		server.setSessionIdManager(sessionIdManager);
-		RequestLogHandler logHandler = new RequestLogHandler();
-		NCSARequestLog requestLog = new NCSARequestLog();
-		requestLog.setFilename(new File(Log_Directory, JETTY_REQUEST_LOG).getAbsolutePath());
-		requestLog.setFilenameDateFormat(REQUEST_LOG_FORMAT);
-		requestLog.setRetainDays(90);
-		requestLog.setAppend(true);
-		requestLog.setExtended(true);
-		requestLog.setLogCookies(false);
-		requestLog.setLogTimeZone(GMT);
-		logHandler.setRequestLog(requestLog);
-		context.setHandler(logHandler);
-		
 		server.setHandler(context);
 
 		log.info("Starting Jetty Server ...\n" + " Listen Port : " + profile.getPort());

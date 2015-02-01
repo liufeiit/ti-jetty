@@ -2,6 +2,7 @@ package me.srv.ti.etc;
 
 import me.srv.ti.jx.XPath;
 import me.srv.ti.jx.XRoot;
+import me.srv.ti.ns.NsRegistry;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -13,7 +14,8 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  * @version 1.0.0
  * @since 2015年1月30日 下午1:55:34
  */
-@XRoot("../etc/profile.xml")
+//@XRoot("../etc/profile.xml")
+@XRoot("F:\\dev\\workspace\\ti-jetty\\ti-jetty\\etc\\profile.xml")
 public class JettyProfile {
 
 	@XPath("/server/port")
@@ -24,8 +26,17 @@ public class JettyProfile {
 	@XPath("/server/war")
 	private String war;
 
-	@XPath("/server/cluster")
-	private boolean cluster;
+	@XPath("/server/sessions")
+	private boolean sessions;
+	
+	@XPath("/server/ssl")
+	private boolean ssl;
+	@XPath("/server/key-store-path")
+	private String keyStorePath;
+	@XPath("/server/key-store-password")
+	private String keyStorePassword;
+	@XPath("/server/key-manager-password")
+	private String keyManagerPassword;
 
 	/** 每个请求被accept前允许等待的连接数 **/
 	@XPath("/server/connector/accept-queue-size")
@@ -77,6 +88,10 @@ public class JettyProfile {
 	@XPath("/server/session/scavenger-interval")
 	private long sessionScavengerInterval;
 	
+	public static void main(String[] args) {
+		System.out.println(NsRegistry.DEFAULT_NS_REGISTRY.newInstance(JettyProfile.class));
+	}
+	
 	public int getPort() {
 		return port;
 	}
@@ -101,12 +116,12 @@ public class JettyProfile {
 		this.war = war;
 	}
 
-	public boolean isCluster() {
-		return cluster;
+	public boolean isSessions() {
+		return sessions;
 	}
 
-	public void setCluster(boolean cluster) {
-		this.cluster = cluster;
+	public void setSessions(boolean sessions) {
+		this.sessions = sessions;
 	}
 
 	public int getAcceptQueueSize() {
@@ -283,6 +298,38 @@ public class JettyProfile {
 
 	public void setSessionScavengerInterval(long sessionScavengerInterval) {
 		this.sessionScavengerInterval = sessionScavengerInterval;
+	}
+
+	public boolean isSsl() {
+		return ssl;
+	}
+
+	public void setSsl(boolean ssl) {
+		this.ssl = ssl;
+	}
+
+	public String getKeyStorePath() {
+		return keyStorePath;
+	}
+
+	public void setKeyStorePath(String keyStorePath) {
+		this.keyStorePath = keyStorePath;
+	}
+
+	public String getKeyStorePassword() {
+		return keyStorePassword;
+	}
+
+	public void setKeyStorePassword(String keyStorePassword) {
+		this.keyStorePassword = keyStorePassword;
+	}
+
+	public String getKeyManagerPassword() {
+		return keyManagerPassword;
+	}
+
+	public void setKeyManagerPassword(String keyManagerPassword) {
+		this.keyManagerPassword = keyManagerPassword;
 	}
 
 	@Override
