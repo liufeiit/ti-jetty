@@ -2,8 +2,12 @@
 <server>
 	<port>8080</port>
 	<context-path>/</context-path>
-	<cluster>false</cluster>
-	<war>/root/apps/scape_api/scape-api.war</war>
+	<sessions>false</sessions>
+	<war>../app/scape-api.war</war>
+	<ssl>false</ssl>
+	<key-store-path></key-store-path>
+	<key-store-password></key-store-password>
+	<key-manager-password></key-manager-password>
 	<connector>
 		<accept-queue-size>100</accept-queue-size>
 		<max-idle-time>5000</max-idle-time>
