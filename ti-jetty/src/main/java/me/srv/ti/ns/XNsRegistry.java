@@ -27,25 +27,14 @@ public class XNsRegistry implements NsRegistry {
 	protected final Logger log = Log.getLogger(getClass());
 
 	@Override
-	public <T> T newInstance(Class<T> xclass) {
-		if (xclass == null) {
+	public <T> T newInstance(T beanObj) {
+		if (beanObj == null) {
 			return null;
 		}
-
-		T bean = null;
-		try {
-			bean = xclass.newInstance();
-		} catch (Exception e) {
-			log.info("Init Bean Error.", e);
-		}
-
-		if (bean == null) {
-			return null;
-		}
-
-		XRoot xroot = xclass.getAnnotation(XRoot.class);
+		Class<? extends Object> clazz = beanObj.getClass();
+		XRoot xroot = clazz.getAnnotation(XRoot.class);
 		if (xroot == null) {
-			log.info(xclass.getName() + " 没有发现XPath配置[" + XRoot.class.getName() + "].");
+			log.info(clazz.getName() + " 没有发现XPath配置[" + XRoot.class.getName() + "].");
 			return null;
 		}
 		String root = xroot.value();
@@ -57,8 +46,8 @@ public class XNsRegistry implements NsRegistry {
 			log.info("读取XPath配置信息异常.", e);
 			return null;
 		}
-		JXPathContext context = JXPathContext.newContext(bean);
-		PropertyDescriptor[] pds = BeanUtils.getPropertyDescriptors(xclass);
+		JXPathContext context = JXPathContext.newContext(beanObj);
+		PropertyDescriptor[] pds = BeanUtils.getPropertyDescriptors(clazz);
 		for (PropertyDescriptor propertyDescriptor : pds) {
 			XPath xpath = null;
 			String name = propertyDescriptor.getName();
@@ -71,7 +60,7 @@ public class XNsRegistry implements NsRegistry {
 			}
 			xpath = method.getAnnotation(XPath.class);
 			if (xpath == null) {
-				Field field = BeanUtils.findField(xclass, name);
+				Field field = BeanUtils.findField(clazz, name);
 				if (field == null) {
 					continue;
 				}
@@ -89,6 +78,6 @@ public class XNsRegistry implements NsRegistry {
 				log.info("Invoking Method[" + method + "] Error.", e);
 			}
 		}
-		return bean;
+		return beanObj;
 	}
 }

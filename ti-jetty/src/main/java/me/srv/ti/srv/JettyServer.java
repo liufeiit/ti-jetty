@@ -26,24 +26,23 @@ public class JettyServer extends AbstractServer {
 
 	protected void start0() throws Exception {
 		server = new Server();
-
 		MBeanContainer mbContainer = new MBeanContainer(ManagementFactory.getPlatformMBeanServer());
 		server.addBean(mbContainer);
-
 		new org.eclipse.jetty.plus.jndi.EnvEntry(server, "version", "1.0.0-Final", false);
-
-		if(profile.isSsl()) {
+		if (profile.isSslEnable()) {
 			SslSelectChannelConnector connector = new SslSelectChannelConnector();
 			connector.setPort(profile.getPort());
 			connector.setAcceptQueueSize(profile.getAcceptQueueSize());
 			connector.setAcceptors(Runtime.getRuntime().availableProcessors() * 2);
 			connector.setMaxIdleTime(profile.getMaxIdleTime());
-			
-			SslContextFactory sslContextFactory = connector.getSslContextFactory();
-			sslContextFactory.setKeyStorePath(profile.getKeyStorePath());
-			sslContextFactory.setKeyStorePassword(profile.getKeyStorePassword());
-			sslContextFactory.setKeyManagerPassword(profile.getKeyManagerPassword());
-			
+			SslContextFactory contextFactory = connector.getSslContextFactory();
+			contextFactory.setKeyStorePath(profile.getKeyStorePath());
+			contextFactory.setKeyStorePassword(profile.getKeyStorePassword());
+			contextFactory.setKeyManagerPassword(profile.getKeyManagerPassword());
+			contextFactory.setTrustStore(profile.getTrustStorePath());
+			contextFactory.setTrustStorePassword(profile.getTrustStorePassword());
+			contextFactory.setNeedClientAuth(profile.isClientAuth());
+			contextFactory.setCertAlias(profile.getCertAlias());
 			server.addConnector(connector);
 		} else {
 			SelectChannelConnector connector = new SelectChannelConnector();
@@ -51,10 +50,8 @@ public class JettyServer extends AbstractServer {
 			connector.setAcceptQueueSize(profile.getAcceptQueueSize());
 			connector.setAcceptors(Runtime.getRuntime().availableProcessors() * 2);
 			connector.setMaxIdleTime(profile.getMaxIdleTime());
-
 			server.addConnector(connector);
 		}
-
 		QueuedThreadPool threadPool = new QueuedThreadPool();
 		threadPool.setMaxThreads(profile.getQueuedMaxThreads());
 		threadPool.setMinThreads(profile.getQueuedMinThreads());
@@ -65,43 +62,30 @@ public class JettyServer extends AbstractServer {
 		threadPool.setDetailedDump(true);
 		threadPool.setName(profile.getQueuedName());
 		threadPool.setThreadsPriority(Thread.NORM_PRIORITY);
-
 		server.setThreadPool(threadPool);
-
-		WebApp context = WebApp.newInstance(profile.isSessions());
-
+		WebApp context = WebApp.newInstance(profile.isSessionsEnable());
 		context.setContextPath(profile.getContextPath());
 		context.setWar(new File(profile.getWar()).getAbsolutePath());
 		context.setParentLoaderPriority(true);
 		context.setExtractWAR(true);
-
 		File tmp = new File(Temp_Directory, guid());
 		if (!tmp.exists()) {
 			tmp.mkdirs();
 		}
-
 		context.setTempDirectory(tmp);
-
-		if (profile.isSessions()) {
+		if (profile.isSessionsEnable()) {
 			setSessionHandler(server, context);
 		}
-
 		setLogHandler(context);
-
 		server.setHandler(context);
-
 		log.info("Starting Jetty Server ...\n" + " Listen Port : " + profile.getPort());
-
 		server.setStopAtShutdown(true);
 		server.setSendServerVersion(true);
-
 		server.start();
 		started.set(true);
 		server.dumpStdErr();
 		log.info("Jetty Server Started Success.\n" + " Listen Port : " + profile.getPort());
-
 		server.join();
-
 	}
 
 	protected void stop0() throws Exception {

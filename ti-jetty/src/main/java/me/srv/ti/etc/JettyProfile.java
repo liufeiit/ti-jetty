@@ -15,34 +15,43 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  * @since 2015年1月30日 下午1:55:34
  */
 //@XRoot("../etc/profile.xml")
-@XRoot("F:\\dev\\workspace\\ti-jetty\\ti-jetty\\etc\\profile.xml")
+@XRoot("/Users/yp/workspace/ti-jetty/ti-jetty/etc/profile.xml")
 public class JettyProfile {
 
-	@XPath("/server/port")
+	@XPath("/server/@port")
 	private int port;
 
-	@XPath("/server/context-path")
+	@XPath("/server/@context-path")
 	private String contextPath;
-	@XPath("/server/war")
+	@XPath("/server/@war")
 	private String war;
 
-	@XPath("/server/sessions")
-	private boolean sessions;
+	@XPath("/server/@sessions-enable")
+	private boolean sessionsEnable;
 	
-	@XPath("/server/ssl")
-	private boolean ssl;
-	@XPath("/server/key-store-path")
+	@XPath("/server/connector/@ssl-enable")
+	private boolean sslEnable;
+	@XPath("/server/connector/key-store-path")
 	private String keyStorePath;
-	@XPath("/server/key-store-password")
+	@XPath("/server/connector/key-store-password")
 	private String keyStorePassword;
-	@XPath("/server/key-manager-password")
+	@XPath("/server/connector/key-manager-password")
 	private String keyManagerPassword;
 
+	@XPath("/server/connector/trust-store-path")
+	private String trustStorePath;
+	@XPath("/server/connector/trust-store-password")
+	private String trustStorePassword;
+	@XPath("/server/connector/client-auth")
+	private boolean clientAuth;
+	@XPath("/server/connector/cert-alias")
+	private String certAlias;
+
 	/** 每个请求被accept前允许等待的连接数 **/
-	@XPath("/server/connector/accept-queue-size")
+	@XPath("/server/connector/@accept-queue-size")
 	private int acceptQueueSize;
 	/** 连接最大空闲时间，默认是200000，-1表示一直连接 **/
-	@XPath("/server/connector/max-idle-time")
+	@XPath("/server/connector/@max-idle-time")
 	private int maxIdleTime;
 
 	@XPath("/server/queued/name")
@@ -89,7 +98,7 @@ public class JettyProfile {
 	private long sessionScavengerInterval;
 	
 	public static void main(String[] args) {
-		System.out.println(NsRegistry.DEFAULT_NS_REGISTRY.newInstance(JettyProfile.class));
+		System.out.println(NsRegistry.DEFAULT_NS_REGISTRY.newInstance(new JettyProfile()));
 	}
 	
 	public int getPort() {
@@ -116,12 +125,20 @@ public class JettyProfile {
 		this.war = war;
 	}
 
-	public boolean isSessions() {
-		return sessions;
+	public boolean isSessionsEnable() {
+		return sessionsEnable;
 	}
 
-	public void setSessions(boolean sessions) {
-		this.sessions = sessions;
+	public void setSessionsEnable(boolean sessionsEnable) {
+		this.sessionsEnable = sessionsEnable;
+	}
+
+	public boolean isSslEnable() {
+		return sslEnable;
+	}
+
+	public void setSslEnable(boolean sslEnable) {
+		this.sslEnable = sslEnable;
 	}
 
 	public int getAcceptQueueSize() {
@@ -300,14 +317,6 @@ public class JettyProfile {
 		this.sessionScavengerInterval = sessionScavengerInterval;
 	}
 
-	public boolean isSsl() {
-		return ssl;
-	}
-
-	public void setSsl(boolean ssl) {
-		this.ssl = ssl;
-	}
-
 	public String getKeyStorePath() {
 		return keyStorePath;
 	}
@@ -332,8 +341,40 @@ public class JettyProfile {
 		this.keyManagerPassword = keyManagerPassword;
 	}
 
+	public String getTrustStorePath() {
+		return trustStorePath;
+	}
+
+	public void setTrustStorePath(String trustStorePath) {
+		this.trustStorePath = trustStorePath;
+	}
+
+	public String getTrustStorePassword() {
+		return trustStorePassword;
+	}
+
+	public void setTrustStorePassword(String trustStorePassword) {
+		this.trustStorePassword = trustStorePassword;
+	}
+
+	public boolean isClientAuth() {
+		return clientAuth;
+	}
+
+	public void setClientAuth(boolean clientAuth) {
+		this.clientAuth = clientAuth;
+	}
+
+	public String getCertAlias() {
+		return certAlias;
+	}
+
+	public void setCertAlias(String certAlias) {
+		this.certAlias = certAlias;
+	}
+
 	@Override
 	public String toString() {
-		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
 	}
 }

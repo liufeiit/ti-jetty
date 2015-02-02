@@ -39,9 +39,9 @@ public abstract class AbstractServer implements Server {
 
 	public AbstractServer() {
 		super();
-		init();
-		profile = NsRegistry.DEFAULT_NS_REGISTRY.newInstance(JettyProfile.class);
+		profile = NsRegistry.DEFAULT_NS_REGISTRY.newInstance(new JettyProfile());
 		log.info("JettyProfile " + profile);
+		init();
 	}
 
 	@Override

@@ -15,5 +15,5 @@ public interface NsRegistry {
     String SET_PREFIX = "set";
     String IS_PREFIX = "is";
     
-	<T> T newInstance(Class<T> xclass);
+	<T> T newInstance(T beanObj);
 }

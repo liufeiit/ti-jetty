@@ -1,16 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<server>
-	<port>8080</port>
-	<context-path>/</context-path>
-	<sessions>false</sessions>
-	<war>../app/scape-api.war</war>
-	<ssl>false</ssl>
-	<key-store-path></key-store-path>
-	<key-store-password></key-store-password>
-	<key-manager-password></key-manager-password>
-	<connector>
-		<accept-queue-size>100</accept-queue-size>
-		<max-idle-time>5000</max-idle-time>
+<server port="8080" context-path="/" sessions-enable="false" war="../app/scape-api.war">
+	<connector ssl-enable="false" accept-queue-size="100" max-idle-time="5000">
+		<key-store-path></key-store-path>
+		<key-store-password></key-store-password>
+		<trust-store-path></trust-store-path>
+		<trust-store-password></trust-store-password>
+		<key-manager-password></key-manager-password>
+		<client-auth>false</client-auth>
+		<cert-alias></cert-alias>
 	</connector>
 	<queued>
 		<name>Jetty.QueuedThreadPool.0001</name>
