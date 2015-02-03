@@ -3,6 +3,7 @@ package me.srv.ti.srv;
 import java.io.File;
 import java.lang.management.ManagementFactory;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jetty.jmx.MBeanContainer;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.nio.SelectChannelConnector;
@@ -39,10 +40,16 @@ public class JettyServer extends AbstractServer {
 			contextFactory.setKeyStorePath(profile.getKeyStorePath());
 			contextFactory.setKeyStorePassword(profile.getKeyStorePassword());
 			contextFactory.setKeyManagerPassword(profile.getKeyManagerPassword());
-			contextFactory.setTrustStore(profile.getTrustStorePath());
-			contextFactory.setTrustStorePassword(profile.getTrustStorePassword());
+			if (StringUtils.isNotBlank(profile.getTrustStorePath())) {
+				contextFactory.setTrustStore(profile.getTrustStorePath());
+			}
+			if (StringUtils.isNotBlank(profile.getTrustStorePassword())) {
+				contextFactory.setTrustStorePassword(profile.getTrustStorePassword());
+			}
 			contextFactory.setNeedClientAuth(profile.isClientAuth());
-			contextFactory.setCertAlias(profile.getCertAlias());
+			if (StringUtils.isNotBlank(profile.getCertAlias())) {
+				contextFactory.setCertAlias(profile.getCertAlias());
+			}
 			server.addConnector(connector);
 		} else {
 			SelectChannelConnector connector = new SelectChannelConnector();
@@ -63,7 +70,7 @@ public class JettyServer extends AbstractServer {
 		threadPool.setName(profile.getQueuedName());
 		threadPool.setThreadsPriority(Thread.NORM_PRIORITY);
 		server.setThreadPool(threadPool);
-		WebApp context = WebApp.newInstance(profile.isSessionsEnable());
+		WebApp context = new WebApp(WebApp.SESSIONS | WebApp.SECURITY);
 		context.setContextPath(profile.getContextPath());
 		context.setWar(new File(profile.getWar()).getAbsolutePath());
 		context.setParentLoaderPriority(true);
@@ -73,9 +80,7 @@ public class JettyServer extends AbstractServer {
 			tmp.mkdirs();
 		}
 		context.setTempDirectory(tmp);
-		if (profile.isSessionsEnable()) {
-			setSessionHandler(server, context);
-		}
+		setSessionHandler(server, context);
 		setLogHandler(context);
 		server.setHandler(context);
 		log.info("Starting Jetty Server ...\n" + " Listen Port : " + profile.getPort());

@@ -15,13 +15,6 @@ import org.eclipse.jetty.webapp.WebAppContext;
  */
 public class WebApp extends WebAppContext {
 	
-	public static WebApp newInstance(boolean sessions) {
-		if(sessions) {
-			return new WebApp(WebApp.SESSIONS | WebApp.SECURITY);
-		}
-		return new WebApp(WebApp.SECURITY);
-	}
-	
 	public WebApp(int options) {
 		super();
 		this._options = options;

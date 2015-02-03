@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<server port="8080" context-path="/" sessions-enable="false" war="../app/scape-api.war">
-	<connector ssl-enable="false" accept-queue-size="100" max-idle-time="5000">
+<server port="8080" context-path="/" war="../app/scape-api.war">
+	<connector ssl-enable="false" client-auth="false" accept-queue-size="100" max-idle-time="5000">
 		<key-store-path></key-store-path>
 		<key-store-password></key-store-password>
+		<key-manager-password></key-manager-password>
 		<trust-store-path></trust-store-path>
 		<trust-store-password></trust-store-password>
-		<key-manager-password></key-manager-password>
-		<client-auth>false</client-auth>
 		<cert-alias></cert-alias>
 	</connector>
 	<queued>
@@ -26,7 +25,7 @@
 		<save-interval>10</save-interval>
 		<scavenger-interval>30000</scavenger-interval>
 	</session>
-	<redis>
+	<redis sessions="false">
 		<host>127.0.0.1</host>
 		<port>6379</port>
 		<max-active>500</max-active>

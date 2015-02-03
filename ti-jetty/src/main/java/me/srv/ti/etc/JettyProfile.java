@@ -14,8 +14,8 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  * @version 1.0.0
  * @since 2015年1月30日 下午1:55:34
  */
-@XRoot("../etc/profile.xml")
-//@XRoot("/Users/yp/workspace/ti-jetty/ti-jetty/etc/profile.xml")
+//@XRoot("../etc/profile.xml")
+@XRoot("/Users/yp/workspace/ti-jetty/ti-jetty/etc/profile.xml")
 public class JettyProfile {
 
 	@XPath("/server/@port")
@@ -25,12 +25,10 @@ public class JettyProfile {
 	private String contextPath;
 	@XPath("/server/@war")
 	private String war;
-
-	@XPath("/server/@sessions-enable")
-	private boolean sessionsEnable;
 	
 	@XPath("/server/connector/@ssl-enable")
 	private boolean sslEnable;
+	
 	@XPath("/server/connector/key-store-path")
 	private String keyStorePath;
 	@XPath("/server/connector/key-store-password")
@@ -42,7 +40,8 @@ public class JettyProfile {
 	private String trustStorePath;
 	@XPath("/server/connector/trust-store-password")
 	private String trustStorePassword;
-	@XPath("/server/connector/client-auth")
+	
+	@XPath("/server/connector/@client-auth")
 	private boolean clientAuth;
 	@XPath("/server/connector/cert-alias")
 	private String certAlias;
@@ -66,6 +65,9 @@ public class JettyProfile {
 	private int queuedMaxIdleTimeMs;
 	@XPath("/server/queued/max-stop-time-ms")
 	private int queuedMaxStopTimeMs;
+
+	@XPath("/server/redis/@sessions")
+	private boolean redisSession;
 
 	@XPath("/server/redis/host")
 	private String redisHost;
@@ -125,12 +127,12 @@ public class JettyProfile {
 		this.war = war;
 	}
 
-	public boolean isSessionsEnable() {
-		return sessionsEnable;
+	public boolean isRedisSession() {
+		return redisSession;
 	}
 
-	public void setSessionsEnable(boolean sessionsEnable) {
-		this.sessionsEnable = sessionsEnable;
+	public void setRedisSession(boolean redisSession) {
+		this.redisSession = redisSession;
 	}
 
 	public boolean isSslEnable() {

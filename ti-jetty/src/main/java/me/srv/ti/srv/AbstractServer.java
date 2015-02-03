@@ -11,6 +11,8 @@ import org.eclipse.jetty.server.NCSARequestLog;
 import org.eclipse.jetty.server.handler.RequestLogHandler;
 import org.eclipse.jetty.server.session.AbstractSessionIdManager;
 import org.eclipse.jetty.server.session.AbstractSessionManager;
+import org.eclipse.jetty.server.session.HashSessionIdManager;
+import org.eclipse.jetty.server.session.HashSessionManager;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.util.log.Log;
 import org.eclipse.jetty.util.log.Logger;
@@ -98,18 +100,23 @@ public abstract class AbstractServer implements Server {
 	}
 
 	protected void setSessionHandler(org.eclipse.jetty.server.Server server, WebApp context) {
-		JedisPool pool = createRedisConnectionPool();
-		AbstractSessionManager sessionManager = new RedisSessionManager(pool, new JsonSerializer());
-		((RedisSessionManager) sessionManager).setSaveInterval(profile.getSessionSaveInterval());
-		AbstractSessionIdManager sessionIdManager = new RedisSessionIdManager(server, pool);
-		((RedisSessionIdManager) sessionIdManager).setScavengerInterval(profile.getSessionScavengerInterval());
-
+		AbstractSessionManager sessionManager;
+		AbstractSessionIdManager sessionIdManager;
+		if (profile.isRedisSession()) {
+			JedisPool pool = createRedisConnectionPool();
+			sessionManager = new RedisSessionManager(pool, new JsonSerializer());
+			((RedisSessionManager) sessionManager).setSaveInterval(profile.getSessionSaveInterval());
+			sessionIdManager = new RedisSessionIdManager(server, pool);
+			((RedisSessionIdManager) sessionIdManager).setScavengerInterval(profile.getSessionScavengerInterval());
+		} else {
+			sessionManager = new HashSessionManager();
+			sessionIdManager = new HashSessionIdManager();
+		}
 		sessionManager.getSessionCookieConfig().setDomain(profile.getSessionDomain());
 		sessionManager.getSessionCookieConfig().setPath(profile.getSessionPath());
 		sessionManager.getSessionCookieConfig().setMaxAge(profile.getSessionMaxAge());
 		sessionManager.setRefreshCookieAge(profile.getSessionAgeInSeconds());
 		sessionIdManager.setWorkerName(profile.getSessionWorkerName());
-
 		sessionManager.setSessionIdManager(sessionIdManager);
 		SessionHandler sessionHandler = new SessionHandler(sessionManager);
 		context.setSessionHandler(sessionHandler);
