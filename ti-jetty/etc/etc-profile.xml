@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <server port="8080" context-path="/" war="../app/scape-api.war">
 	<connector ssl-enable="false" client-auth="false" accept-queue-size="500" max-idle-time="30000">
 		<key-store-path></key-store-path>

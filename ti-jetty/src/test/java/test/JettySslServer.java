@@ -4,7 +4,7 @@ import java.util.Properties;
 
 import javax.naming.NamingException;
 
-import me.srv.ti.srv.WebApp;
+import me.jetty.ti.srv.WebApp;
 
 import org.eclipse.jetty.jndi.factories.MailSessionReference;
 import org.eclipse.jetty.server.Server;
