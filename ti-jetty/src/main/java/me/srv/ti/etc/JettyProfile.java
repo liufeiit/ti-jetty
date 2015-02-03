@@ -14,8 +14,8 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  * @version 1.0.0
  * @since 2015年1月30日 下午1:55:34
  */
-//@XRoot("../etc/profile.xml")
-@XRoot("/Users/yp/workspace/ti-jetty/ti-jetty/etc/profile.xml")
+@XRoot("../etc/profile.xml")
+//@XRoot("/Users/yp/workspace/ti-jetty/ti-jetty/etc/profile.xml")
 public class JettyProfile {
 
 	@XPath("/server/@port")
