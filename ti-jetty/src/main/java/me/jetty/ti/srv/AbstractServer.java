@@ -69,7 +69,7 @@ public abstract class AbstractServer implements Server {
 		List<ContextMapping> mappings = profile.getMappings();
 		if (mappings != null && !mappings.isEmpty()) {
 			for (ContextMapping mapping : mappings) {
-				contextMapping.put(mapping.getPath(), mapping.getTo());
+				contextMapping.put(mapping.getPath(), mapping.getMapping());
 			}
 		}
 		init();
