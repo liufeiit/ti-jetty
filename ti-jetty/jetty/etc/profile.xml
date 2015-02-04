@@ -1,13 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<server port="8080" context-path="/" war="../app/scape-api.war">
-	<connector ssl-enable="false" client-auth="false" accept-queue-size="100" max-idle-time="5000">
+<server redis-session-enable="false">
+	<context-mapping path="scape-api.war" to="/"/>
+	<connector port="8080" enable="true" accept-queue-size="200" max-idle-time="30000" />
+	<connector port="8081" enable="false" accept-queue-size="200" max-idle-time="30000" />
+	<ssl-connector port="443" enable="false" 
+		accept-queue-size="200" max-idle-time="30000" client-auth="false" cert-alias="">
 		<key-store-path></key-store-path>
 		<key-store-password></key-store-password>
 		<key-manager-password></key-manager-password>
 		<trust-store-path></trust-store-path>
 		<trust-store-password></trust-store-password>
-		<cert-alias></cert-alias>
-	</connector>
+	</ssl-connector>
+	<ssl-connector port="8443" enable="false" 
+		accept-queue-size="200" max-idle-time="30000" client-auth="false" cert-alias="">
+		<key-store-path></key-store-path>
+		<key-store-password></key-store-password>
+		<key-manager-password></key-manager-password>
+		<trust-store-path></trust-store-path>
+		<trust-store-password></trust-store-password>
+	</ssl-connector>
 	<queued>
 		<name>Jetty.QueuedThreadPool.0001</name>
 		<min-threads>5</min-threads>
@@ -25,7 +36,7 @@
 		<save-interval>10</save-interval>
 		<scavenger-interval>30000</scavenger-interval>
 	</session>
-	<redis sessions="false">
+	<redis>
 		<host>127.0.0.1</host>
 		<port>6379</port>
 		<max-active>500</max-active>
