@@ -1,14 +1,20 @@
 package me.jetty.ti.srv;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.lang.management.ManagementFactory;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
+import me.jetty.ti.etc.Connector;
+import me.jetty.ti.etc.QueuedPool;
+import me.jetty.ti.etc.SslConnector;
+
 import org.eclipse.jetty.jmx.MBeanContainer;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.server.nio.SelectChannelConnector;
 import org.eclipse.jetty.server.ssl.SslSelectChannelConnector;
-import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 
 /**
@@ -30,68 +36,81 @@ public class JettyServer extends AbstractServer {
 		MBeanContainer mbContainer = new MBeanContainer(ManagementFactory.getPlatformMBeanServer());
 		server.addBean(mbContainer, true);
 		new org.eclipse.jetty.plus.jndi.EnvEntry(server, "version", "1.0.0-Final", false);
-		if (profile.isSslEnable()) {
-			SslSelectChannelConnector connector = new SslSelectChannelConnector();
-			connector.setPort(profile.getPort());
-			connector.setAcceptQueueSize(profile.getAcceptQueueSize());
-			connector.setAcceptors(Runtime.getRuntime().availableProcessors() * 2);
-			connector.setMaxIdleTime(profile.getMaxIdleTime());
-			SslContextFactory contextFactory = connector.getSslContextFactory();
-			contextFactory.setKeyStorePath(profile.getKeyStorePath());
-			contextFactory.setKeyStorePassword(profile.getKeyStorePassword());
-			contextFactory.setKeyManagerPassword(profile.getKeyManagerPassword());
-			if (StringUtils.isNotBlank(profile.getTrustStorePath())) {
-				contextFactory.setTrustStore(profile.getTrustStorePath());
+		List<SelectChannelConnector> connectors = new ArrayList<SelectChannelConnector>();
+		List<Connector> profileConnectors = profile.getConnectors();
+		if (profileConnectors != null && !profileConnectors.isEmpty()) {
+			for (Connector connect : profileConnectors) {
+				if (!connect.isEnable()) {
+					continue;
+				}
+				SelectChannelConnector connector = newConnector(connect);
+				connectors.add(connector);
 			}
-			if (StringUtils.isNotBlank(profile.getTrustStorePassword())) {
-				contextFactory.setTrustStorePassword(profile.getTrustStorePassword());
-			}
-			contextFactory.setNeedClientAuth(profile.isClientAuth());
-			if (StringUtils.isNotBlank(profile.getCertAlias())) {
-				contextFactory.setCertAlias(profile.getCertAlias());
-			}
-			server.addConnector(connector);
-		} else {
-			SelectChannelConnector connector = new SelectChannelConnector();
-			connector.setPort(profile.getPort());
-			connector.setAcceptQueueSize(profile.getAcceptQueueSize());
-			connector.setAcceptors(Runtime.getRuntime().availableProcessors() * 2);
-			connector.setMaxIdleTime(profile.getMaxIdleTime());
-			server.addConnector(connector);
 		}
+		List<SslConnector> profileSslConnectors = profile.getSslConnectors();
+		if (profileSslConnectors != null && !profileSslConnectors.isEmpty()) {
+			for (SslConnector connect : profileSslConnectors) {
+				if (!connect.isEnable()) {
+					continue;
+				}
+				SslSelectChannelConnector connector = newSslConnector(connect);
+				connectors.add(connector);
+			}
+		}
+		server.setConnectors(connectors.toArray(new SelectChannelConnector[connectors.size()]));
+
 		QueuedThreadPool threadPool = new QueuedThreadPool();
-		threadPool.setMaxThreads(profile.getQueuedMaxThreads());
-		threadPool.setMinThreads(profile.getQueuedMinThreads());
-		threadPool.setMaxQueued(profile.getQueuedMaxQueued());
-		threadPool.setMaxStopTimeMs(profile.getQueuedMaxStopTimeMs());
-		threadPool.setMaxIdleTimeMs(profile.getQueuedMaxIdleTimeMs());
+		QueuedPool queuedPool = profile.getQueuedPool();
+		threadPool.setMaxThreads(queuedPool.getMaxThreads());
+		threadPool.setMinThreads(queuedPool.getMinThreads());
+		threadPool.setMaxQueued(queuedPool.getMaxQueued());
+		threadPool.setMaxStopTimeMs(queuedPool.getMaxStopTimeMs());
+		threadPool.setMaxIdleTimeMs(queuedPool.getMaxIdleTimeMs());
 		threadPool.setDaemon(true);
 		threadPool.setDetailedDump(true);
-		threadPool.setName(profile.getQueuedName());
+		threadPool.setName(queuedPool.getName());
 		threadPool.setThreadsPriority(Thread.NORM_PRIORITY);
 		server.setThreadPool(threadPool);
-		
-		WebApp context = new WebApp(WebApp.SESSIONS | WebApp.SECURITY);
-		context.setContextPath(profile.getContextPath());
-		context.setWar(new File(profile.getWar()).getAbsolutePath());
-		context.setParentLoaderPriority(true);
-		context.setExtractWAR(true);
-		File tmp = new File(Temp_Directory, guid());
-		if (!tmp.exists()) {
-			tmp.mkdirs();
+
+		File[] apps = Apps_Directory.listFiles(new FileFilter() {
+			@Override
+			public boolean accept(File file) {
+				if (file.isFile()) {
+					return file.getName().toLowerCase().endsWith(".war");
+				}
+				return true;
+			}
+		});
+
+		ContextHandlerCollection contexts = new ContextHandlerCollection();
+		for (File file : apps) {
+			String contextPath = file.getName();
+			if (contextMapping.get(contextPath) != null) {
+				contextPath = contextMapping.get(contextPath);
+			}
+			WebApp context = new WebApp(WebApp.SESSIONS | WebApp.SECURITY);
+			context.setContextPath(contextPath);
+			context.setWar(file.getAbsolutePath());
+			context.setParentLoaderPriority(true);
+			context.setExtractWAR(true);
+			File tmp = new File(Temp_Directory, guid());
+			if (!tmp.exists()) {
+				tmp.mkdirs();
+			}
+			context.setTempDirectory(tmp);
+			setSessionHandler(server, context);
+			setLogHandler(context);
+			contexts.addHandler(context);
 		}
-		context.setTempDirectory(tmp);
-		setSessionHandler(server, context);
-		setLogHandler(context);
-		server.setHandler(context);
-		
-		log.info("Starting Jetty Server ...\n" + " Listen Port : " + profile.getPort());
+		server.setHandler(contexts);
+
+		log.info("Starting Jetty Server ...");
 		server.setStopAtShutdown(true);
 		server.setSendServerVersion(true);
 		server.start();
 		started.set(true);
 		server.dumpStdErr();
-		log.info("Jetty Server Started Success.\n" + " Listen Port : " + profile.getPort());
+		log.info("Jetty Server Started Success.");
 		server.join();
 	}
 
