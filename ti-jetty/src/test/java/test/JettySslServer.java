@@ -4,7 +4,7 @@ import java.util.Properties;
 
 import javax.naming.NamingException;
 
-import me.jetty.ti.srv.WebApp;
+import me.jetty.ti.srv.Application;
 
 import org.eclipse.jetty.jndi.factories.MailSessionReference;
 import org.eclipse.jetty.server.Server;
@@ -36,7 +36,7 @@ public class JettySslServer {
 		server.join();
 	}
 
-	void setMailJndiResource(WebApp context) throws NamingException {
+	void setMailJndiResource(Application context) throws NamingException {
 		MailSessionReference mailref = new MailSessionReference();
 		mailref.setUser("CHANGE-ME");
 		mailref.setPassword("CHANGE-ME");

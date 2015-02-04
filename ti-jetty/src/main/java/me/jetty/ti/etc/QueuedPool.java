@@ -12,7 +12,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * @version 1.0.0
  * @since 2015年2月4日 下午4:47:28
  */
-@XStreamAlias("queued")
+@XStreamAlias("queued-pool")
 public class QueuedPool {
 	@XStreamAlias("name")
 	private String name;

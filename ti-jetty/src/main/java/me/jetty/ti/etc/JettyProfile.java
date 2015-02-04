@@ -16,7 +16,7 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
  * @since 2015年2月4日 上午12:02:40
  */
 @XStreamAlias("server")
-public class Profile {
+public class JettyProfile {
 
 	@XStreamImplicit(itemFieldName = "connector")
 	private List<Connector> connectors;
@@ -24,7 +24,7 @@ public class Profile {
 	@XStreamImplicit(itemFieldName = "ssl-connector")
 	private List<SslConnector> sslConnectors;
 
-	@XStreamAlias("queued")
+	@XStreamAlias("queued-pool")
 	private QueuedPool queuedPool;
 
 	@XStreamAlias("session")

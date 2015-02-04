@@ -88,7 +88,7 @@ public class JettyServer extends AbstractServer {
 			if (contextMapping.get(contextPath) != null) {
 				contextPath = contextMapping.get(contextPath);
 			}
-			WebApp context = new WebApp(WebApp.SESSIONS | WebApp.SECURITY);
+			Application context = new Application(Application.SESSIONS | Application.SECURITY);
 			context.setContextPath(contextPath);
 			context.setWar(file.getAbsolutePath());
 			context.setParentLoaderPriority(true);

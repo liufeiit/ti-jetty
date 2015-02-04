@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import me.jetty.ti.etc.Connector;
 import me.jetty.ti.etc.ContextMapping;
-import me.jetty.ti.etc.Profile;
+import me.jetty.ti.etc.JettyProfile;
 import me.jetty.ti.etc.Redis;
 import me.jetty.ti.etc.Session;
 import me.jetty.ti.etc.SslConnector;
@@ -53,14 +53,14 @@ public abstract class AbstractServer implements Server {
 
 	protected AtomicBoolean started = new AtomicBoolean(false);
 
-	protected Profile profile;
+	protected JettyProfile profile;
 
 	protected Map<String, String> contextMapping = new HashMap<String, String>();
 
 	public AbstractServer() {
 		super();
 		try {
-			profile = XmlUtils.toObj(Profile.class, StreamUtils.copyToString(new FileInputStream("../etc/profile.xml"), Charset.forName("UTF-8")), "server");
+			profile = XmlUtils.toObj(JettyProfile.class, StreamUtils.copyToString(new FileInputStream("../etc/profile.xml"), Charset.forName("UTF-8")), "server");
 		} catch (IOException e) {
 			log.info("Reading Jetty Profile Error.", e);
 			System.exit(-1);
@@ -146,7 +146,7 @@ public abstract class AbstractServer implements Server {
 		return connector;
 	}
 
-	protected void setLogHandler(WebApp context) {
+	protected void setLogHandler(Application context) {
 		RequestLogHandler logHandler = new RequestLogHandler();
 		NCSARequestLog requestLog = new NCSARequestLog();
 		requestLog.setFilename(new File(Log_Directory, JETTY_REQUEST_LOG).getAbsolutePath());
@@ -160,7 +160,7 @@ public abstract class AbstractServer implements Server {
 		context.setHandler(logHandler);
 	}
 
-	protected void setSessionHandler(org.eclipse.jetty.server.Server server, WebApp context) {
+	protected void setSessionHandler(org.eclipse.jetty.server.Server server, Application context) {
 		Session session = profile.getSession();
 		AbstractSessionManager sessionManager;
 		AbstractSessionIdManager sessionIdManager;

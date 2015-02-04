@@ -21,8 +21,8 @@ public class ContextMapping {
 	private String path;
 	
 	@XStreamAsAttribute
-	@XStreamAlias("to")
-	private String to;
+	@XStreamAlias("mapping")
+	private String mapping;
 
 	public String getPath() {
 		return path;
@@ -32,12 +32,12 @@ public class ContextMapping {
 		this.path = path;
 	}
 
-	public String getTo() {
-		return to;
+	public String getMapping() {
+		return mapping;
 	}
 
-	public void setTo(String to) {
-		this.to = to;
+	public void setMapping(String mapping) {
+		this.mapping = mapping;
 	}
 
 	@Override
