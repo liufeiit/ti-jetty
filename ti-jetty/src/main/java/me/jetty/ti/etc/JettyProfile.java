@@ -24,8 +24,8 @@ public class JettyProfile {
 	@XStreamImplicit(itemFieldName = "ssl-connector")
 	private List<SslConnector> sslConnectors;
 
-	@XStreamAlias("queued-pool")
-	private QueuedPool queuedPool;
+	@XStreamAlias("thread-pool")
+	private ThreadPool threadPool;
 
 	@XStreamAlias("session")
 	private Session session;
@@ -39,6 +39,10 @@ public class JettyProfile {
 	@XStreamAsAttribute
 	@XStreamAlias("redis-session-enable")
 	private boolean redisSessionEnable;
+
+	@XStreamAsAttribute
+	@XStreamAlias("dump-std-err")
+	private boolean dumpStdErr;
 
 	public List<Connector> getConnectors() {
 		return connectors;
@@ -56,12 +60,12 @@ public class JettyProfile {
 		this.sslConnectors = sslConnectors;
 	}
 
-	public QueuedPool getQueuedPool() {
-		return queuedPool;
+	public ThreadPool getThreadPool() {
+		return threadPool;
 	}
 
-	public void setQueuedPool(QueuedPool queuedPool) {
-		this.queuedPool = queuedPool;
+	public void setThreadPool(ThreadPool threadPool) {
+		this.threadPool = threadPool;
 	}
 
 	public Session getSession() {
@@ -94,6 +98,14 @@ public class JettyProfile {
 
 	public void setRedisSessionEnable(boolean redisSessionEnable) {
 		this.redisSessionEnable = redisSessionEnable;
+	}
+
+	public boolean isDumpStdErr() {
+		return dumpStdErr;
+	}
+
+	public void setDumpStdErr(boolean dumpStdErr) {
+		this.dumpStdErr = dumpStdErr;
 	}
 
 	@Override

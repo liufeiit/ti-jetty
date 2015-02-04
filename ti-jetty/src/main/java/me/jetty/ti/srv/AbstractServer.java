@@ -57,6 +57,18 @@ public abstract class AbstractServer implements Server {
 
 	protected Map<String, String> contextMapping = new HashMap<String, String>();
 
+	public static void main(String[] args) {
+		try {
+			JettyProfile profile = XmlUtils.toObj(JettyProfile.class, 
+					StreamUtils.copyToString(new FileInputStream("etc/profile.xml"), 
+							Charset.forName("UTF-8")), "server");
+			System.out.println(profile);
+		} catch (IOException e) {
+			log.info("Reading Jetty Profile Error.", e);
+			System.exit(-1);
+		}
+	}
+	
 	public AbstractServer() {
 		super();
 		try {

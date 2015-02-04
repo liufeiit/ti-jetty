@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import me.jetty.ti.etc.Connector;
-import me.jetty.ti.etc.QueuedPool;
+import me.jetty.ti.etc.ThreadPool;
 import me.jetty.ti.etc.SslConnector;
 
 import org.eclipse.jetty.jmx.MBeanContainer;
@@ -60,15 +60,15 @@ public class JettyServer extends AbstractServer {
 		server.setConnectors(connectors.toArray(new SelectChannelConnector[connectors.size()]));
 
 		QueuedThreadPool threadPool = new QueuedThreadPool();
-		QueuedPool queuedPool = profile.getQueuedPool();
-		threadPool.setMaxThreads(queuedPool.getMaxThreads());
-		threadPool.setMinThreads(queuedPool.getMinThreads());
-		threadPool.setMaxQueued(queuedPool.getMaxQueued());
-		threadPool.setMaxStopTimeMs(queuedPool.getMaxStopTimeMs());
-		threadPool.setMaxIdleTimeMs(queuedPool.getMaxIdleTimeMs());
-		threadPool.setDaemon(true);
+		ThreadPool pool = profile.getThreadPool();
+		threadPool.setMaxThreads(pool.getMaxThreads());
+		threadPool.setMinThreads(pool.getMinThreads());
+		threadPool.setMaxQueued(pool.getMaxQueued());
+		threadPool.setMaxStopTimeMs(pool.getMaxStopTimeMs());
+		threadPool.setMaxIdleTimeMs(pool.getMaxIdleTimeMs());
+		threadPool.setDaemon(pool.isDaemon());
 		threadPool.setDetailedDump(true);
-		threadPool.setName(queuedPool.getName());
+		threadPool.setName(pool.getName());
 		threadPool.setThreadsPriority(Thread.NORM_PRIORITY);
 		server.setThreadPool(threadPool);
 
@@ -109,7 +109,9 @@ public class JettyServer extends AbstractServer {
 		server.setSendServerVersion(true);
 		server.start();
 		started.set(true);
-		server.dumpStdErr();
+		if(profile.isDumpStdErr()) {
+			server.dumpStdErr();
+		}
 		log.info("Jetty Server Started Success.");
 		server.join();
 	}

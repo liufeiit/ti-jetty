@@ -12,14 +12,14 @@ import java.io.Serializable;
 public class User implements Serializable {
 
 	private static final long serialVersionUID = -3418598147153414291L;
-
+	
 	/**
 	 * 应用ID
 	 */
 	private String appId;
 	
 	/**
-	 * 用于绑定应用的用户ID
+	 * 用于绑定应用系统用户开放ID
 	 */
 	private String openId;
 	

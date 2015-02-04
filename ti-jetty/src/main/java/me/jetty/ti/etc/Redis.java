@@ -4,6 +4,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
  * 
@@ -14,18 +15,27 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  */
 @XStreamAlias("redis")
 public class Redis {
+	
+	@XStreamAsAttribute
 	@XStreamAlias("host")
 	private String host;
+
+	@XStreamAsAttribute
 	@XStreamAlias("port")
 	private int port;
+	
 	@XStreamAlias("max-active")
 	private int maxActive;
+	
 	@XStreamAlias("min-idle")
 	private int minIdle;
+	
 	@XStreamAlias("max-idle")
 	private int maxIdle;
+	
 	@XStreamAlias("max-wait")
 	private long maxWait;
+	
 	@XStreamAlias("timeout")
 	private int timeout;
 
