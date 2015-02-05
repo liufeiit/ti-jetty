@@ -1,4 +1,4 @@
-package me.jetty.ti.auth;
+package me.jetty.ti.auth.response;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
@@ -7,11 +7,10 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * @author 刘飞
  * 
  * @version 1.0.0
- * @since 2015年2月4日 下午10:37:57
+ * @since 2015年2月5日 上午11:31:31
  */
-@XStreamAlias("user")
-public class User {
-
+@XStreamAlias("login-response")
+public class LoginResponse {
 	/**
 	 * 应用ID
 	 */

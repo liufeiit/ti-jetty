@@ -1,9 +1,6 @@
 package me.jetty.ti.srv;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,11 +10,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import me.jetty.ti.etc.Connector;
 import me.jetty.ti.etc.ContextMapping;
 import me.jetty.ti.etc.JettyProfile;
-import me.jetty.ti.etc.Redis;
 import me.jetty.ti.etc.Session;
 import me.jetty.ti.etc.SslConnector;
-import me.jetty.ti.utils.StreamUtils;
-import me.jetty.ti.utils.XmlUtils;
+import me.jetty.ti.utils.ProfileHolder;
+import me.jetty.ti.utils.RedisUtils;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jetty.server.NCSARequestLog;
@@ -34,7 +30,6 @@ import org.eclipse.jetty.util.log.Logger;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 
 import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.JedisPoolConfig;
 
 import com.ovea.jetty.session.redis.RedisSessionIdManager;
 import com.ovea.jetty.session.redis.RedisSessionManager;
@@ -56,27 +51,10 @@ public abstract class AbstractServer implements Server {
 	protected JettyProfile profile;
 
 	protected Map<String, String> contextMapping = new HashMap<String, String>();
-
-	public static void main(String[] args) {
-		try {
-			JettyProfile profile = XmlUtils.toObj(JettyProfile.class, 
-					StreamUtils.copyToString(new FileInputStream("etc/profile.xml"), 
-							Charset.forName("UTF-8")), "server");
-			System.out.println(profile);
-		} catch (IOException e) {
-			log.info("Reading Jetty Profile Error.", e);
-			System.exit(-1);
-		}
-	}
 	
 	public AbstractServer() {
 		super();
-		try {
-			profile = XmlUtils.toObj(JettyProfile.class, StreamUtils.copyToString(new FileInputStream("../etc/profile.xml"), Charset.forName("UTF-8")), "server");
-		} catch (IOException e) {
-			log.info("Reading Jetty Profile Error.", e);
-			System.exit(-1);
-		}
+		profile = ProfileHolder.getProfile();
 		log.info("Profile " + profile);
 		List<ContextMapping> mappings = profile.getMappings();
 		if (mappings != null && !mappings.isEmpty()) {
@@ -177,7 +155,7 @@ public abstract class AbstractServer implements Server {
 		AbstractSessionManager sessionManager;
 		AbstractSessionIdManager sessionIdManager;
 		if (profile.isRedisSessionEnable()) {
-			JedisPool pool = createRedisConnectionPool();
+			JedisPool pool = RedisUtils.createRedisConnectionPool(profile.getRedis());
 			sessionManager = new RedisSessionManager(pool, new JsonSerializer());
 			((RedisSessionManager) sessionManager).setSaveInterval(session.getSessionSaveInterval());
 			sessionIdManager = new RedisSessionIdManager(server, pool);
@@ -195,17 +173,6 @@ public abstract class AbstractServer implements Server {
 		SessionHandler sessionHandler = new SessionHandler(sessionManager);
 		context.setSessionHandler(sessionHandler);
 		server.setSessionIdManager(sessionIdManager);
-	}
-
-	protected JedisPool createRedisConnectionPool() {
-		JedisPoolConfig poolConfig = new JedisPoolConfig();
-		Redis redis = profile.getRedis();
-		poolConfig.setMaxActive(redis.getMaxActive());
-		poolConfig.setMinIdle(redis.getMinIdle());
-		poolConfig.setMaxIdle(redis.getMaxIdle());
-		poolConfig.setMaxWait(redis.getMaxWait());
-		JedisPool pool = new JedisPool(poolConfig, redis.getHost(), redis.getPort(), redis.getTimeout());
-		return pool;
 	}
 
 	protected String guid() {
