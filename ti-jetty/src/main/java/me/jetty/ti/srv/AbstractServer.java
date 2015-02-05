@@ -155,7 +155,7 @@ public abstract class AbstractServer implements Server {
 		AbstractSessionManager sessionManager;
 		AbstractSessionIdManager sessionIdManager;
 		if (profile.isRedisSessionEnable()) {
-			JedisPool pool = RedisUtils.createRedisConnectionPool(profile.getRedis());
+			JedisPool pool = RedisUtils.createRedisConnectionPool();
 			sessionManager = new RedisSessionManager(pool, new JsonSerializer());
 			((RedisSessionManager) sessionManager).setSaveInterval(session.getSessionSaveInterval());
 			sessionIdManager = new RedisSessionIdManager(server, pool);

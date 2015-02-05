@@ -1,5 +1,13 @@
 package me.jetty.ti.auth;
 
+import me.jetty.ti.auth.request.CheckRequest;
+import me.jetty.ti.auth.request.LoginRequest;
+import me.jetty.ti.auth.request.RequestAlias;
+import me.jetty.ti.auth.response.CheckResponse;
+import me.jetty.ti.auth.response.LoginResponse;
+import me.jetty.ti.auth.response.ResponseAlias;
+import me.jetty.ti.utils.XmlUtils;
+
 /**
  * @author 刘飞
  * 
@@ -9,12 +17,20 @@ package me.jetty.ti.auth;
 public class RedisAuthorizationServiceAdapter extends AbstractRedisAuthorizationService implements AuthorizationService {
 
 	@Override
-	public String login(String secretId) {
-		return null;
+	public String login(String loginRequest) {
+		LoginRequest request = XmlUtils.toObj(LoginRequest.class, loginRequest, RequestAlias.Login);
+		if(request == null) {
+			return LoginResponse.DEFAULT_RESPONSE_XML;
+		}
+		return XmlUtils.toXML(login(request), ResponseAlias.Login);
 	}
 
 	@Override
-	public boolean check(String secretJson) {
-		return false;
+	public String check(String checkRequest) {
+		CheckRequest request = XmlUtils.toObj(CheckRequest.class, checkRequest, RequestAlias.Check);
+		if(request == null) {
+			return CheckResponse.DEFAULT_RESPONSE_XML;
+		}
+		return XmlUtils.toXML(check(request), ResponseAlias.Check);
 	}
 }

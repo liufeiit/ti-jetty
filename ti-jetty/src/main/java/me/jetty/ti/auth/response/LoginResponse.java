@@ -1,5 +1,9 @@
 package me.jetty.ti.auth.response;
 
+import me.jetty.ti.utils.XmlUtils;
+
+import org.apache.commons.lang3.StringUtils;
+
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 /**
@@ -9,8 +13,13 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * @version 1.0.0
  * @since 2015年2月5日 上午11:31:31
  */
-@XStreamAlias("login-response")
+@XStreamAlias(ResponseAlias.Login)
 public class LoginResponse {
+
+	public static final LoginResponse DEFAULT_RESPONSE = new LoginResponse(StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, -1);
+
+	public static final String DEFAULT_RESPONSE_XML = XmlUtils.toXML(DEFAULT_RESPONSE, ResponseAlias.Login);
+	
 	/**
 	 * 应用ID
 	 */
@@ -33,7 +42,15 @@ public class LoginResponse {
 	 * 凭证有效时间，单位：秒
 	 */
 	@XStreamAlias("expires_in")
-	private Long expires_in;
+	private Integer expires_in;
+
+	public LoginResponse(String app_id, String open_id, String access_token, Integer expires_in) {
+		super();
+		this.app_id = app_id;
+		this.open_id = open_id;
+		this.access_token = access_token;
+		this.expires_in = expires_in;
+	}
 
 	public String getApp_id() {
 		return app_id;
@@ -59,11 +76,11 @@ public class LoginResponse {
 		this.access_token = access_token;
 	}
 
-	public Long getExpires_in() {
+	public Integer getExpires_in() {
 		return expires_in;
 	}
 
-	public void setExpires_in(Long expires_in) {
+	public void setExpires_in(Integer expires_in) {
 		this.expires_in = expires_in;
 	}
 }

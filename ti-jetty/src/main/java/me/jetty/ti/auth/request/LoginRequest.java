@@ -9,7 +9,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * @version 1.0.0
  * @since 2015年2月5日 上午11:29:17
  */
-@XStreamAlias("login-request")
+@XStreamAlias(RequestAlias.Login)
 public class LoginRequest {
 	/**
 	 * 应用ID

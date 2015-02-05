@@ -18,5 +18,5 @@ public interface AuthorizationService {
 	/**
 	 * 用户身份校验
 	 */
-	boolean check(String secretXml);
+	String check(String secretXml);
 }

@@ -12,7 +12,8 @@ import redis.clients.jedis.JedisPoolConfig;
  */
 public class RedisUtils {
 
-	public static JedisPool createRedisConnectionPool(Redis redis) {
+	public static JedisPool createRedisConnectionPool() {
+		Redis redis = ProfileHolder.getProfile().getRedis();
 		JedisPoolConfig poolConfig = new JedisPoolConfig();
 		poolConfig.setMaxActive(redis.getMaxActive());
 		poolConfig.setMinIdle(redis.getMinIdle());
