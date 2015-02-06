@@ -43,6 +43,10 @@ public class JettyProfile {
 	@XStreamAsAttribute
 	@XStreamAlias("dump-std-err")
 	private boolean dumpStdErr;
+	
+	@XStreamAsAttribute
+	@XStreamAlias("token-expires-in-sec")
+	private int tokenExpiresInSec;
 
 	public List<Connector> getConnectors() {
 		return connectors;
@@ -106,6 +110,17 @@ public class JettyProfile {
 
 	public void setDumpStdErr(boolean dumpStdErr) {
 		this.dumpStdErr = dumpStdErr;
+	}
+
+	public int getTokenExpiresInSec() {
+		if(tokenExpiresInSec <= 0) {
+			return 60 * 60 * 24 * 30;
+		}
+		return tokenExpiresInSec;
+	}
+
+	public void setTokenExpiresInSec(int tokenExpiresInSec) {
+		this.tokenExpiresInSec = tokenExpiresInSec;
 	}
 
 	@Override

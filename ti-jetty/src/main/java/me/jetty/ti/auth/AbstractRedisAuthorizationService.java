@@ -10,6 +10,7 @@ import me.jetty.ti.redis.RedisConnectionFactory;
 import me.jetty.ti.redis.RedisTemplate;
 import me.jetty.ti.utils.CryptoUtils;
 import me.jetty.ti.utils.GuidUtils;
+import me.jetty.ti.utils.ProfileHolder;
 import me.jetty.ti.utils.RedisUtils;
 
 import org.apache.commons.lang3.StringUtils;
@@ -29,8 +30,6 @@ import redis.clients.jedis.JedisPool;
 public abstract class AbstractRedisAuthorizationService {
 
 	protected final Logger log = Log.getLogger(getClass());
-
-	public static final int DEFAULT_EXPIRES_IN_SEC = 3 * 60 * 60;// 秒
 
 	protected RedisTemplate redisTemplate;
 
@@ -57,7 +56,7 @@ public abstract class AbstractRedisAuthorizationService {
 			@Override
 			public LoginResponse doInRedis(Jedis jedis) throws Throwable {
 				String access_token = CryptoUtils.sign(open_id, secretId);
-				int expires_in = DEFAULT_EXPIRES_IN_SEC;
+				int expires_in = ProfileHolder.getProfile().getTokenExpiresInSec();
 				// 设置access_token的过期时间
 				jedis.setex(open_id, expires_in, access_token);
 				return new LoginResponse(appId, open_id, access_token, expires_in);

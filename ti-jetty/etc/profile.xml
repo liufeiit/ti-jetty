@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<server redis-session-enable="false" dump-std-err="false">
+<server redis-session-enable="false" dump-std-err="false" token-expires-in-sec="5184000">
 	<context-mapping path="scape-api.war" mapping="/"/>
 	<connector port="8080" enable="true" accept-queue-size="200" max-idle-time="30000" />
 	<connector port="8081" enable="true" accept-queue-size="200" max-idle-time="30000" />
