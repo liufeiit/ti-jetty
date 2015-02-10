@@ -1,5 +1,7 @@
 package me.jetty.ti.auth.request;
 
+import me.jetty.ti.auth.Alias;
+
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 /**
@@ -9,25 +11,25 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * @version 1.0.0
  * @since 2015年2月5日 下午3:01:07
  */
-@XStreamAlias(RequestAlias.Check)
+@XStreamAlias(Alias.Check_Request)
 public class CheckRequest {
 	
 	/**
 	 * 应用ID
 	 */
-	@XStreamAlias("app_id")
+	@XStreamAlias(Alias.APP_ID)
 	private String app_id;
 
 	/**
 	 * 用于绑定应用系统用户开放ID
 	 */
-	@XStreamAlias("open_id")
+	@XStreamAlias(Alias.OPEN_ID)
 	private String open_id;
 
 	/**
 	 * 访问凭证令牌
 	 */
-	@XStreamAlias("access_token")
+	@XStreamAlias(Alias.ACCESS_TOKEN)
 	private String access_token;
 
 	public String getApp_id() {

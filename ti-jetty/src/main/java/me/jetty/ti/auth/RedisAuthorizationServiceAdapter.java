@@ -2,10 +2,8 @@ package me.jetty.ti.auth;
 
 import me.jetty.ti.auth.request.CheckRequest;
 import me.jetty.ti.auth.request.LoginRequest;
-import me.jetty.ti.auth.request.RequestAlias;
 import me.jetty.ti.auth.response.CheckResponse;
 import me.jetty.ti.auth.response.LoginResponse;
-import me.jetty.ti.auth.response.ResponseAlias;
 import me.jetty.ti.utils.XmlUtils;
 
 /**
@@ -18,19 +16,19 @@ public class RedisAuthorizationServiceAdapter extends AbstractRedisAuthorization
 
 	@Override
 	public String login(String loginRequest) {
-		LoginRequest request = XmlUtils.toObj(LoginRequest.class, loginRequest, RequestAlias.Login);
+		LoginRequest request = XmlUtils.toObj(LoginRequest.class, loginRequest, Alias.Login_Request);
 		if(request == null) {
 			return LoginResponse.DEFAULT_RESPONSE_XML;
 		}
-		return XmlUtils.toXML(login(request), ResponseAlias.Login);
+		return XmlUtils.toXML(login(request), Alias.Login_Response);
 	}
 
 	@Override
 	public String check(String checkRequest) {
-		CheckRequest request = XmlUtils.toObj(CheckRequest.class, checkRequest, RequestAlias.Check);
+		CheckRequest request = XmlUtils.toObj(CheckRequest.class, checkRequest, Alias.Check_Request);
 		if(request == null) {
 			return CheckResponse.DEFAULT_RESPONSE_XML;
 		}
-		return XmlUtils.toXML(check(request), ResponseAlias.Check);
+		return XmlUtils.toXML(check(request), Alias.Check_Response);
 	}
 }

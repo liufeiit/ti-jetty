@@ -1,5 +1,6 @@
 package me.jetty.ti.auth.response;
 
+import me.jetty.ti.auth.Alias;
 import me.jetty.ti.utils.XmlUtils;
 
 import org.apache.commons.lang3.StringUtils;
@@ -13,35 +14,35 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * @version 1.0.0
  * @since 2015年2月5日 上午11:31:31
  */
-@XStreamAlias(ResponseAlias.Login)
+@XStreamAlias(Alias.Login_Response)
 public class LoginResponse {
 
 	public static final LoginResponse DEFAULT_RESPONSE = new LoginResponse(StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, -1);
 
-	public static final String DEFAULT_RESPONSE_XML = XmlUtils.toXML(DEFAULT_RESPONSE, ResponseAlias.Login);
+	public static final String DEFAULT_RESPONSE_XML = XmlUtils.toXML(DEFAULT_RESPONSE, Alias.Login_Response);
 	
 	/**
 	 * 应用ID
 	 */
-	@XStreamAlias("app_id")
+	@XStreamAlias(Alias.APP_ID)
 	private String app_id;
 
 	/**
 	 * 用于绑定应用系统用户开放ID
 	 */
-	@XStreamAlias("open_id")
+	@XStreamAlias(Alias.OPEN_ID)
 	private String open_id;
 
 	/**
 	 * 访问凭证令牌
 	 */
-	@XStreamAlias("access_token")
+	@XStreamAlias(Alias.ACCESS_TOKEN)
 	private String access_token;
 
 	/**
 	 * 凭证有效时间，单位：秒
 	 */
-	@XStreamAlias("expires_in")
+	@XStreamAlias(Alias.EXPIRES_IN)
 	private Integer expires_in;
 
 	public LoginResponse(String app_id, String open_id, String access_token, Integer expires_in) {
