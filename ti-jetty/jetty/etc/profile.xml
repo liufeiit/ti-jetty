@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <server redis-session-enable="false" dump-std-err="false" token-expires-in-sec="5184000">
 	<context-mapping path="scape-api.war" mapping="/"/>
+	<context-mapping path="scape-web.war" mapping="/"/>
 	<connector port="8080" enable="true" accept-queue-size="200" max-idle-time="30000" />
 	<connector port="8081" enable="true" accept-queue-size="200" max-idle-time="30000" />
-	<ssl-connector port="443" enable="true" 
+	<ssl-connector port="443" enable="false" 
 		accept-queue-size="200" max-idle-time="30000" client-auth="false" cert-alias="jetty">
 		<key-store-path>/root/.ssl/jetty.keystore</key-store-path>
 		<key-store-password>U4gFVce7AEHOc5tbkPwaDXPMAoYExF2k8LUedAa_Jq0</key-store-password>
@@ -11,7 +12,7 @@
 		<trust-store-path></trust-store-path>
 		<trust-store-password></trust-store-password>
 	</ssl-connector>
-	<ssl-connector port="8443" enable="true" 
+	<ssl-connector port="8443" enable="false" 
 		accept-queue-size="200" max-idle-time="30000" client-auth="false" cert-alias="jetty">
 		<key-store-path>/root/.ssl/jetty.keystore</key-store-path>
 		<key-store-password>U4gFVce7AEHOc5tbkPwaDXPMAoYExF2k8LUedAa_Jq0</key-store-password>
