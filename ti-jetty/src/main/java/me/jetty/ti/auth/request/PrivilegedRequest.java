@@ -11,8 +11,8 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * @version 1.0.0
  * @since 2015年2月5日 下午3:01:07
  */
-@XStreamAlias(Alias.Check_Request)
-public class CheckRequest {
+@XStreamAlias(Alias.Privileged_Request)
+public class PrivilegedRequest {
 	
 	/**
 	 * 应用ID

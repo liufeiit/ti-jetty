@@ -51,7 +51,7 @@ public abstract class AbstractServer implements Server {
 	protected JettyProfile profile;
 
 	protected Map<String, String> contextMapping = new HashMap<String, String>();
-	
+
 	public AbstractServer() {
 		super();
 		profile = ProfileHolder.getProfile();
@@ -81,6 +81,12 @@ public abstract class AbstractServer implements Server {
 		}
 		started.set(false);
 		stop0();
+		if (!profile.isRollback()) {
+			Temp_Directory.delete();
+		}
+		if (!profile.isBackup()) {
+			Log_Directory.delete();
+		}
 	}
 
 	protected abstract void start0() throws Exception;
@@ -93,10 +99,24 @@ public abstract class AbstractServer implements Server {
 	}
 
 	protected void init() {
-		if (!Temp_Directory.exists()) {
+		if (profile.isRollback()) {
+			if (!Temp_Directory.exists()) {
+				Temp_Directory.mkdirs();
+			}
+		} else {
+			if (Temp_Directory.exists()) {
+				Temp_Directory.delete();
+			}
 			Temp_Directory.mkdirs();
 		}
-		if (!Log_Directory.exists()) {
+		if (profile.isBackup()) {
+			if (!Log_Directory.exists()) {
+				Log_Directory.mkdirs();
+			}
+		} else {
+			if (Log_Directory.exists()) {
+				Log_Directory.delete();
+			}
 			Log_Directory.mkdirs();
 		}
 		if (!Apps_Directory.exists()) {

@@ -13,10 +13,10 @@ public interface AuthorizationService {
 	/**
 	 * 用户登录
 	 */
-	String login(String secretId);
+	String doLogin(String secretId);
 	
 	/**
 	 * 用户身份校验
 	 */
-	String check(String secretXml);
+	String doPrivileged(String secretXml);
 }

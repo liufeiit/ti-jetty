@@ -10,6 +10,7 @@ import me.jetty.ti.etc.Connector;
 import me.jetty.ti.etc.ThreadPool;
 import me.jetty.ti.etc.SslConnector;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jetty.jmx.MBeanContainer;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
@@ -76,32 +77,41 @@ public class JettyServer extends AbstractServer {
 			@Override
 			public boolean accept(File file) {
 				if (file.isFile()) {
-					return file.getName().toLowerCase().endsWith(".war");
+					return file.getName().toLowerCase().endsWith(WAR_LOWERCASE_SUFFIX);
 				}
 				return true;
 			}
 		});
 
 		ContextHandlerCollection contexts = new ContextHandlerCollection();
-		for (File file : apps) {
-			String contextPath = file.getName();
-			if (contextMapping.get(contextPath) != null) {
-				contextPath = contextMapping.get(contextPath);
+
+		if (apps != null) {
+			boolean singleWar = (apps.length == 1);
+			for (File file : apps) {
+				String contextPath = file.getName();
+				String configAppPath = contextMapping.get(contextPath);
+				if (StringUtils.isNotBlank(configAppPath)) {
+					contextPath = configAppPath;
+				}
+				if (singleWar) {
+					contextPath = ROOT_APP_PATH;
+				}
+				Application context = new Application(Application.SESSIONS | Application.SECURITY);
+				context.setContextPath(contextPath);
+				context.setWar(file.getAbsolutePath());
+				context.setParentLoaderPriority(true);
+				context.setExtractWAR(true);
+				File tmp = new File(Temp_Directory, guid());
+				if (!tmp.exists()) {
+					tmp.mkdirs();
+				}
+				context.setTempDirectory(tmp);
+				setSessionHandler(server, context);
+				setLogHandler(context);
+				contexts.addHandler(context);
 			}
-			Application context = new Application(Application.SESSIONS | Application.SECURITY);
-			context.setContextPath(contextPath);
-			context.setWar(file.getAbsolutePath());
-			context.setParentLoaderPriority(true);
-			context.setExtractWAR(true);
-			File tmp = new File(Temp_Directory, guid());
-			if (!tmp.exists()) {
-				tmp.mkdirs();
-			}
-			context.setTempDirectory(tmp);
-			setSessionHandler(server, context);
-			setLogHandler(context);
-			contexts.addHandler(context);
 		}
+
 		server.setHandler(contexts);
 
 		log.info("Starting Jetty Server ...");
@@ -109,7 +119,7 @@ public class JettyServer extends AbstractServer {
 		server.setSendServerVersion(true);
 		server.start();
 		started.set(true);
-		if(profile.isDumpStdErr()) {
+		if (profile.isDumpStdErr()) {
 			server.dumpStdErr();
 		}
 		log.info("Jetty Server Started Success.");

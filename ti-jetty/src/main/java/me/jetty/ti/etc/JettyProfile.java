@@ -45,6 +45,14 @@ public class JettyProfile {
 	private boolean dumpStdErr;
 	
 	@XStreamAsAttribute
+	@XStreamAlias("rollback-enable")
+	private boolean rollback;
+	
+	@XStreamAsAttribute
+	@XStreamAlias("backup-log")
+	private boolean backup;
+	
+	@XStreamAsAttribute
 	@XStreamAlias("token-expires-in-sec")
 	private int tokenExpiresInSec;
 
@@ -121,6 +129,22 @@ public class JettyProfile {
 
 	public void setTokenExpiresInSec(int tokenExpiresInSec) {
 		this.tokenExpiresInSec = tokenExpiresInSec;
+	}
+
+	public boolean isRollback() {
+		return rollback;
+	}
+
+	public void setRollback(boolean rollback) {
+		this.rollback = rollback;
+	}
+
+	public boolean isBackup() {
+		return backup;
+	}
+
+	public void setBackup(boolean backup) {
+		this.backup = backup;
 	}
 
 	@Override

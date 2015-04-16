@@ -9,10 +9,10 @@ package me.jetty.ti.auth;
  */
 public interface Alias {
 	String Login_Request = "login-request";
-	String Check_Request = "check-request";
+	String Privileged_Request = "privileged-request";
 	
 	String Login_Response = "login-response";
-	String Check_Response = "check-response";
+	String Privileged_Response = "privileged-response";
 	
 	String APP_ID = "app_id";
 	String SECRET_ID = "secret_id";

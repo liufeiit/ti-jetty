@@ -1,8 +1,8 @@
 package me.jetty.ti.auth;
 
-import me.jetty.ti.auth.request.CheckRequest;
+import me.jetty.ti.auth.request.PrivilegedRequest;
 import me.jetty.ti.auth.request.LoginRequest;
-import me.jetty.ti.auth.response.CheckResponse;
+import me.jetty.ti.auth.response.PrivilegedResponse;
 import me.jetty.ti.auth.response.LoginResponse;
 import me.jetty.ti.redis.DefaultRedisConnectionFactory;
 import me.jetty.ti.redis.RedisCallback;
@@ -40,7 +40,7 @@ public abstract class AbstractRedisAuthorizationService {
 		redisTemplate = new RedisTemplate(connectionFactory);
 	}
 
-	protected LoginResponse login(LoginRequest request) {
+	protected LoginResponse doLogin(LoginRequest request) {
 		final String appId = request.getApp_id();
 		final String secretId = request.getSecret_id();
 		final String open_id = redisTemplate.execute(new RedisCallback<String>() {
@@ -64,26 +64,26 @@ public abstract class AbstractRedisAuthorizationService {
 		}, LoginResponse.DEFAULT_RESPONSE);
 	}
 
-	protected CheckResponse check(CheckRequest request) {
+	protected PrivilegedResponse doPrivileged(PrivilegedRequest request) {
 		final String appId = request.getApp_id();
 		final String open_id = request.getOpen_id();
 		final String access_token = request.getAccess_token();
-		return redisTemplate.execute(new RedisCallback<CheckResponse>() {
+		return redisTemplate.execute(new RedisCallback<PrivilegedResponse>() {
 			@Override
-			public CheckResponse doInRedis(Jedis jedis) throws Throwable {
+			public PrivilegedResponse doInRedis(Jedis jedis) throws Throwable {
 				String _access_token = jedis.get(open_id);
 				if (StringUtils.isEmpty(_access_token)) {
-					return CheckResponse.DEFAULT_RESPONSE;
+					return PrivilegedResponse.DEFAULT_RESPONSE;
 				}
 				if (!StringUtils.equals(_access_token, access_token)) {
-					return CheckResponse.DEFAULT_RESPONSE;
+					return PrivilegedResponse.DEFAULT_RESPONSE;
 				}
 				String secretId = jedis.hget(appId, open_id);
 				if (StringUtils.isEmpty(secretId)) {
-					return CheckResponse.DEFAULT_RESPONSE;
+					return PrivilegedResponse.DEFAULT_RESPONSE;
 				}
-				return new CheckResponse(secretId);
+				return new PrivilegedResponse(secretId);
 			}
-		}, CheckResponse.DEFAULT_RESPONSE);
+		}, PrivilegedResponse.DEFAULT_RESPONSE);
 	}
 }

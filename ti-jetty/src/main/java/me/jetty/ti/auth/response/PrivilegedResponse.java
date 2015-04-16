@@ -14,12 +14,12 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * @version 1.0.0
  * @since 2015年2月5日 下午3:01:24
  */
-@XStreamAlias(Alias.Check_Response)
-public class CheckResponse {
+@XStreamAlias(Alias.Privileged_Response)
+public class PrivilegedResponse {
 	
-	public static final CheckResponse DEFAULT_RESPONSE = new CheckResponse(StringUtils.EMPTY);
+	public static final PrivilegedResponse DEFAULT_RESPONSE = new PrivilegedResponse(StringUtils.EMPTY);
 	
-	public static final String DEFAULT_RESPONSE_XML = XmlUtils.toXML(DEFAULT_RESPONSE, Alias.Check_Response);
+	public static final String DEFAULT_RESPONSE_XML = XmlUtils.toXML(DEFAULT_RESPONSE, Alias.Privileged_Response);
 	
 	/**
 	 * 应用系统用户ID
@@ -27,7 +27,7 @@ public class CheckResponse {
 	@XStreamAlias(Alias.SECRET_ID)
 	private String secret_id;
 
-	public CheckResponse(String secret_id) {
+	public PrivilegedResponse(String secret_id) {
 		super();
 		this.secret_id = secret_id;
 	}
