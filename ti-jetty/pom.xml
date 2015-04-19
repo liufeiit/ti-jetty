@@ -14,6 +14,8 @@
 		<dom4j.version>1.6.1</dom4j.version>
 		<commons.lang3.version>3.1</commons.lang3.version>
 		<commons-codec>1.9</commons-codec>
+		<!--<jar.main.class>me.jetty.ti.starter.ServerStarter</jar.main.class>-->
+		<jar.main.class>me.jetty.ti.manager.JettyServerManager</jar.main.class>
 	</properties>
 
 	<dependencies>
@@ -201,8 +203,7 @@
 						<manifest>
 							<addClasspath>true</addClasspath>
 							<classpathPrefix>../lib/</classpathPrefix>
-							<!--<mainClass>me.jetty.ti.starter.ServerStarter</mainClass>-->
-							<mainClass>me.jetty.ti.manager.JettyServerManager</mainClass>
+							<mainClass>${jar.main.class}</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
