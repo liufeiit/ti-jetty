@@ -1,2 +1,5 @@
 /target/
 /build/
+/jetty/lib/
+/jetty/logs/
+/jetty/.tmp/

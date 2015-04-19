@@ -91,7 +91,7 @@ public class JettyServerManager extends Window implements ActionListener, MouseL
 		Insets screenInsets = Toolkit.getDefaultToolkit().getScreenInsets(getGraphicsConfiguration());
 		int taskBarHeight = screenInsets.bottom;
 		setBounds(dim.width - 320 - 1, dim.height - taskBarHeight - 100 - 1, 320, 100);
-		Image image = tool.getImage(ResourceUtils.getResource("/image/server_icon.png"));
+		Image image = tool.getImage(ResourceUtils.getResource("/image/server.png"));
 		setIconImage(image);
 		container.add(initButton(), BorderLayout.CENTER);
 		setCursor(Cursor.getPredefinedCursor(12));
@@ -113,7 +113,7 @@ public class JettyServerManager extends Window implements ActionListener, MouseL
 		pop.add(exitItem);
 		if (SystemTray.isSupported()) {
 			SystemTray tray = SystemTray.getSystemTray();
-			Image icon = getToolkit().getImage(ResourceUtils.getResource("/image/tray_icon.png"));
+			Image icon = getToolkit().getImage(ResourceUtils.getResource("/image/server.png"));
 			trayicon = new TrayIcon(icon, TITLE, pop);
 			trayicon.addMouseListener(this);
 			try {
