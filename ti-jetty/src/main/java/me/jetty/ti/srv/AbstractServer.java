@@ -2,10 +2,10 @@ package me.jetty.ti.srv;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import me.jetty.ti.etc.Connector;
 import me.jetty.ti.etc.ContextMapping;
@@ -36,26 +36,27 @@ import com.ovea.jetty.session.redis.RedisSessionManager;
 import com.ovea.jetty.session.serializer.JsonSerializer;
 
 /**
- * 
- * @author fei.liu E-mail:fei.liu@andpay.me
- * 
+ * @author 刘飞 E-mail:liufei_it@126.com
  * @version 1.0.0
- * @since 2015年1月30日 下午5:25:57
+ * @since 2015年4月18日 下午6:20:23
  */
 public abstract class AbstractServer implements Server {
 
-	protected final static Logger log = Log.getLogger(JettyServer.class);
-
-	protected AtomicBoolean started = new AtomicBoolean(false);
+	protected final Logger log = Log.getLogger(getClass());
 
 	protected JettyProfile profile;
 
-	protected Map<String, String> contextMapping = new HashMap<String, String>();
+	protected final Map<String, String> contextMapping;
+	
+	protected final LinkedList<ServerStartedCallback> startedCallbacks;
+	
+	protected final LinkedList<ServerStopedCallback> stopedCallbacks;
 
 	public AbstractServer() {
 		super();
 		profile = ProfileHolder.getProfile();
 		log.info("Profile " + profile);
+		contextMapping = new HashMap<String, String>();
 		List<ContextMapping> mappings = profile.getMappings();
 		if (mappings != null && !mappings.isEmpty()) {
 			for (ContextMapping mapping : mappings) {
@@ -63,23 +64,17 @@ public abstract class AbstractServer implements Server {
 			}
 		}
 		init();
+		startedCallbacks = new LinkedList<ServerStartedCallback>();
+		stopedCallbacks = new LinkedList<ServerStopedCallback>();
 	}
 
 	@Override
 	public final void start() throws Exception {
-		if (started.compareAndSet(true, true) && isStarted()) {
-			log.warn("Jetty Server has been started.");
-			return;
-		}
 		start0();
 	}
 
 	@Override
 	public final void stop() throws Exception {
-		if (!isStarted()) {
-			return;
-		}
-		started.set(false);
 		stop0();
 		if (!profile.isRollback()) {
 			Temp_Directory.delete();
@@ -89,14 +84,21 @@ public abstract class AbstractServer implements Server {
 		}
 	}
 
+	@Override
+	public Server addStartedCallback(ServerStartedCallback callback) {
+		startedCallbacks.add(callback);
+		return this;
+	}
+
+	@Override
+	public Server addStopedCallback(ServerStopedCallback callback) {
+		stopedCallbacks.add(callback);
+		return this;
+	}
+
 	protected abstract void start0() throws Exception;
 
 	protected abstract void stop0() throws Exception;
-
-	@Override
-	public boolean isStarted() {
-		return started.get();
-	}
 
 	protected void init() {
 		if (profile.isRollback()) {

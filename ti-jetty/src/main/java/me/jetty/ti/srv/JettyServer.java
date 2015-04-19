@@ -19,14 +19,15 @@ import org.eclipse.jetty.server.ssl.SslSelectChannelConnector;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 
 /**
- * 
- * @author john.liu E-mail:fei.liu@yeepay.com
+ * @author 刘飞 E-mail:liufei_it@126.com
  * @version 1.0.0
- * @since 2015年1月12日 上午10:12:01
+ * @since 2015年4月18日 下午6:19:52
  */
 public class JettyServer extends AbstractServer {
 
 	private Server server;
+	
+	public static JettyServer JettyServerInstance;
 
 	public JettyServer() {
 		super();
@@ -118,19 +119,50 @@ public class JettyServer extends AbstractServer {
 		server.setStopAtShutdown(true);
 		server.setSendServerVersion(true);
 		server.start();
-		started.set(true);
 		if (profile.isDumpStdErr()) {
 			server.dumpStdErr();
 		}
 		log.info("Jetty Server Started Success.");
+		
+		startedCall();
+		
 		server.join();
 	}
-
+	
+	private void startedCall() {
+		if(startedCallbacks.isEmpty()) {
+			return;
+		}
+		for(ServerStartedCallback call : startedCallbacks) {
+			try {
+				call.call(this);
+			} catch (Exception e) {
+				log.warn("ServerStartedCallback Invoking Error.", e);
+			}
+		}
+	}
+	
+	private void stopedCall() {
+		if(stopedCallbacks.isEmpty()) {
+			return;
+		}
+		for(ServerStopedCallback call : stopedCallbacks) {
+			try {
+				call.call();
+			} catch (Exception e) {
+				log.warn("ServerStopedCallback Invoking Error.", e);
+			}
+		}
+	}
+	
 	protected void stop0() throws Exception {
 		log.info("Stoping Jetty Server ...");
 		try {
 			server.stop();
 			server = null;
+			stopedCall();
+			stopedCallbacks.clear();
+			startedCallbacks.clear();
 		} catch (Exception e) {
 			log.warn("Jetty Server Stop Error.", e);
 		}
@@ -138,6 +170,6 @@ public class JettyServer extends AbstractServer {
 	}
 
 	public boolean isStarted() {
-		return super.isStarted() && server != null && server.isStarted();
+		return server != null && server.isStarted();
 	}
 }

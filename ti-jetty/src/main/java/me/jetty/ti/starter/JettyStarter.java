@@ -6,45 +6,41 @@ import org.eclipse.jetty.util.log.Log;
 import org.eclipse.jetty.util.log.Logger;
 
 /**
- * 
- * @author john.liu E-mail:fei.liu@yeepay.com
+ * @author 刘飞 E-mail:liufei_it@126.com
  * @version 1.0.0
- * @since 2015年1月16日 下午5:31:50
+ * @since 2015年4月18日 下午6:20:02
  */
 public class JettyStarter {
 
 	private final static Logger log = Log.getLogger(JettyStarter.class);
 
-	private JettyServer server;
-
 	public JettyStarter() {
 		super();
-		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					stop();
-				} catch (Exception e) {
-					log.warn("Jetty Stop Error.", e);
-				}
-			}
-		}));
-		try {
-			start();
-		} catch (Exception e) {
-			log.warn("Jetty Start Error.", e);
+		if(JettyServer.JettyServerInstance == null) {
+			JettyServer.JettyServerInstance = new JettyServer();
 		}
 	}
 
 	public void start() throws Exception {
-		server = new JettyServer();
-		server.start();
+		JettyServer.JettyServerInstance.start();
+		Runtime.getRuntime().addShutdownHook(new Thread(new JettyShutdownHook()));
 	}
 
 	public void stop() throws Exception {
-		if (server != null) {
-			server.stop();
-			server = null;
+		if (JettyServer.JettyServerInstance != null) {
+			JettyServer.JettyServerInstance.stop();
+			JettyServer.JettyServerInstance = null;
+		}
+	}
+	
+	private class JettyShutdownHook implements Runnable {
+		@Override
+		public void run() {
+			try {
+				stop();
+			} catch (Exception e) {
+				log.warn("Jetty Stop Error.", e);
+			}
 		}
 	}
 }

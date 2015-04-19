@@ -15,12 +15,10 @@ import org.eclipse.jetty.util.log.Log;
 import org.eclipse.jetty.util.log.Logger;
 
 /**
- * 
  * @author 刘飞 E-mail:liufei_it@126.com
  * @version 1.0.0
- * @since 2015年1月14日 上午1:10:05
+ * @since 2015年4月18日 下午6:20:11
  */
-@SuppressWarnings("rawtypes")
 public class ServerStarter {
 
 	private final static Logger log = Log.getLogger(ServerStarter.class);
@@ -29,27 +27,28 @@ public class ServerStarter {
 
 	public static void main(String[] args) {
 		try {
-			new ServerStarter().start();
+			Class<?> jettyStarterClass = new ServerStarter().loader();
+			JettyStarter jettyStarter = (JettyStarter) jettyStarterClass.newInstance();
+			jettyStarter.start();
 		} catch (Exception e) {
 			log.warn("Jetty Server Started Error.", e);
-			System.exit(-1);
 		}
 	}
 
-	private void start() throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+	public Class<?> loader() throws Exception {
 		final ClassLoader parent = findParentClassLoader();
 		File libDir = new File(DEFAULT_LIB_DIR);
 		unpackArchives(libDir, true);
 		ClassLoader loader = new JettyClassLoader(parent, libDir);
 		Thread.currentThread().setContextClassLoader(loader);
-		Class serverClass = loader.loadClass(JettyStarter.class.getName());
-		serverClass.newInstance();
+		Class<?> jettyStarterClass = loader.loadClass(JettyStarter.class.getName());
+		return jettyStarterClass;
 	}
 
 	private ClassLoader findParentClassLoader() {
 		ClassLoader parent = Thread.currentThread().getContextClassLoader();
 		if (parent == null) {
-			parent = this.getClass().getClassLoader();
+			parent = getClass().getClassLoader();
 			if (parent == null) {
 				parent = ClassLoader.getSystemClassLoader();
 			}

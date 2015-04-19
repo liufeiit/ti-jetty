@@ -201,7 +201,8 @@
 						<manifest>
 							<addClasspath>true</addClasspath>
 							<classpathPrefix>../lib/</classpathPrefix>
-							<mainClass>me.jetty.ti.starter.ServerStarter</mainClass>
+							<!--<mainClass>me.jetty.ti.starter.ServerStarter</mainClass>-->
+							<mainClass>me.jetty.ti.manager.JettyServerManager</mainClass>
 						</manifest>
 					</archive>
 				</configuration>

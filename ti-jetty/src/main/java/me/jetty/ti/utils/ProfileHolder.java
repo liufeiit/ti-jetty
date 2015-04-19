@@ -38,10 +38,18 @@ public class ProfileHolder {
 		}
 		try {
 			ProfileHolder.profile = XmlUtils.toObj(JettyProfile.class, StreamUtils.copyToString(new FileInputStream("../etc/profile.xml"), Charset.forName("UTF-8")), "server");
+//			ProfileHolder.profile = XmlUtils.toObj(JettyProfile.class, StreamUtils.copyToString(new FileInputStream("etc/profile.xml"), Charset.forName("UTF-8")), "server");
 		} catch (IOException e) {
 			log.info("Reading Jetty Profile Error.", e);
 			System.exit(-1);
 		}
 		return ProfileHolder.profile;
+	}
+	
+	public static int getPort() {
+		if(ProfileHolder.profile != null) {
+			return ProfileHolder.profile.getConnectors().get(0).getPort();
+		}
+		return 8080;
 	}
 }
