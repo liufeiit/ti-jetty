@@ -7,5 +7,5 @@ package me.jetty.ti.srv.handler;
  * @since 2015年4月20日 下午6:03:56
  */
 public interface EventHandler {
-	String getName();
+	
 }

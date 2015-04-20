@@ -21,26 +21,27 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
 /**
+ * 用户授权服务.
  * 
  * @author 刘飞
  * 
  * @version 1.0.0
  * @since 2015年2月5日 上午11:28:14
  */
-public abstract class AbstractRedisAuthorizationService {
+public class RedisAuthenticationProvider implements AuthenticationProvider {
 
 	protected final Logger log = Log.getLogger(getClass());
 
 	protected RedisTemplate redisTemplate;
 
-	public AbstractRedisAuthorizationService() {
+	public RedisAuthenticationProvider() {
 		super();
 		JedisPool redisConnectionPool = RedisUtils.createRedisConnectionPool();
 		RedisConnectionFactory connectionFactory = new DefaultRedisConnectionFactory(redisConnectionPool);
 		redisTemplate = new RedisTemplate(connectionFactory);
 	}
 
-	protected LoginResponse doLogin(LoginRequest request) {
+	public LoginResponse doLogin(LoginRequest request) {
 		final String appId = request.getApp_id();
 		final String secretId = request.getSecret_id();
 		final String open_id = redisTemplate.execute(new RedisCallback<String>() {
@@ -64,7 +65,7 @@ public abstract class AbstractRedisAuthorizationService {
 		}, LoginResponse.DEFAULT_RESPONSE);
 	}
 
-	protected PrivilegedResponse doPrivileged(PrivilegedRequest request) {
+	public PrivilegedResponse doPrivileged(PrivilegedRequest request) {
 		final String appId = request.getApp_id();
 		final String open_id = request.getOpen_id();
 		final String access_token = request.getAccess_token();
