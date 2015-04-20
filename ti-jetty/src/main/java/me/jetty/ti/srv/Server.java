@@ -8,12 +8,12 @@ import java.io.File;
  * @since 2015年4月18日 下午6:20:34
  */
 public interface Server {
-	File 		Temp_Directory 			= 		new File("../.tmp/.vfs/");
-	File 		Log_Directory 			= 		new File("../logs/");
-	File 		Apps_Directory 			= 		new File("../apps/");
+	File 		TEMP_DIRECTORY 			= 		new File("../.tmp/.vfs/");
+	File 		LOG_DIRECTORY 			= 		new File("../logs/");
+	File 		APPS_DIRECTORY 			= 		new File("../apps/");
 	String 		GMT 					= 		"GMT";
 	String 		REQUEST_LOG_FORMAT 		= 		"yyyy_MM_dd";
-	String 		JETTY_REQUEST_LOG 		= 		"jetty-yyyy_mm_dd.request.log";
+	String 		JETTY_REQUEST_LOG 		= 		"ti-jetty-yyyy_mm_dd.request.log";
 	
 	String		ROOT_APP_PATH 			= 		"/";
 	String 		WAR_LOWERCASE_SUFFIX 	= 		".war";

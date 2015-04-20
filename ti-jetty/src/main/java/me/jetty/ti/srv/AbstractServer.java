@@ -77,10 +77,10 @@ public abstract class AbstractServer implements Server {
 	public final void stop() throws Exception {
 		stop0();
 		if (!profile.isRollback()) {
-			Temp_Directory.delete();
+			TEMP_DIRECTORY.delete();
 		}
 		if (!profile.isBackup()) {
-			Log_Directory.delete();
+			LOG_DIRECTORY.delete();
 		}
 	}
 
@@ -102,27 +102,27 @@ public abstract class AbstractServer implements Server {
 
 	protected void init() {
 		if (profile.isRollback()) {
-			if (!Temp_Directory.exists()) {
-				Temp_Directory.mkdirs();
+			if (!TEMP_DIRECTORY.exists()) {
+				TEMP_DIRECTORY.mkdirs();
 			}
 		} else {
-			if (Temp_Directory.exists()) {
-				Temp_Directory.delete();
+			if (TEMP_DIRECTORY.exists()) {
+				TEMP_DIRECTORY.delete();
 			}
-			Temp_Directory.mkdirs();
+			TEMP_DIRECTORY.mkdirs();
 		}
 		if (profile.isBackup()) {
-			if (!Log_Directory.exists()) {
-				Log_Directory.mkdirs();
+			if (!LOG_DIRECTORY.exists()) {
+				LOG_DIRECTORY.mkdirs();
 			}
 		} else {
-			if (Log_Directory.exists()) {
-				Log_Directory.delete();
+			if (LOG_DIRECTORY.exists()) {
+				LOG_DIRECTORY.delete();
 			}
-			Log_Directory.mkdirs();
+			LOG_DIRECTORY.mkdirs();
 		}
-		if (!Apps_Directory.exists()) {
-			Apps_Directory.mkdirs();
+		if (!APPS_DIRECTORY.exists()) {
+			APPS_DIRECTORY.mkdirs();
 		}
 	}
 
@@ -161,7 +161,7 @@ public abstract class AbstractServer implements Server {
 	protected void setLogHandler(Application context) {
 		RequestLogHandler logHandler = new RequestLogHandler();
 		NCSARequestLog requestLog = new NCSARequestLog();
-		requestLog.setFilename(new File(Log_Directory, JETTY_REQUEST_LOG).getAbsolutePath());
+		requestLog.setFilename(new File(LOG_DIRECTORY, JETTY_REQUEST_LOG).getAbsolutePath());
 		requestLog.setFilenameDateFormat(REQUEST_LOG_FORMAT);
 		requestLog.setRetainDays(90);
 		requestLog.setAppend(true);

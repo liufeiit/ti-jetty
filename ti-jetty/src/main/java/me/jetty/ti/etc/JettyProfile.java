@@ -38,23 +38,35 @@ public class JettyProfile {
 
 	@XStreamAsAttribute
 	@XStreamAlias("redis-session-enable")
-	private boolean redisSessionEnable;
+	private boolean redisSessionEnable = false;
 
 	@XStreamAsAttribute
 	@XStreamAlias("dump-std-err")
-	private boolean dumpStdErr;
+	private boolean dumpStdErr = false;
 	
 	@XStreamAsAttribute
 	@XStreamAlias("rollback-enable")
-	private boolean rollback;
+	private boolean rollback = false;
 	
 	@XStreamAsAttribute
 	@XStreamAlias("backup-log")
-	private boolean backup;
+	private boolean backup = false;
+	
+	@XStreamAsAttribute
+	@XStreamAlias("single-app-root")
+	private boolean singleAppRoot = true;
 	
 	@XStreamAsAttribute
 	@XStreamAlias("token-expires-in-sec")
-	private int tokenExpiresInSec;
+	private int tokenExpiresInSec = 5184000;
+
+	public boolean isSingleAppRoot() {
+		return singleAppRoot;
+	}
+
+	public void setSingleAppRoot(boolean singleAppRoot) {
+		this.singleAppRoot = singleAppRoot;
+	}
 
 	public List<Connector> getConnectors() {
 		return connectors;

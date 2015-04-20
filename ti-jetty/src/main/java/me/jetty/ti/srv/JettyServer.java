@@ -74,7 +74,7 @@ public class JettyServer extends AbstractServer {
 		threadPool.setThreadsPriority(Thread.NORM_PRIORITY);
 		server.setThreadPool(threadPool);
 
-		File[] apps = Apps_Directory.listFiles(new FileFilter() {
+		File[] apps = APPS_DIRECTORY.listFiles(new FileFilter() {
 			@Override
 			public boolean accept(File file) {
 				if (file.isFile()) {
@@ -94,7 +94,7 @@ public class JettyServer extends AbstractServer {
 				if (StringUtils.isNotBlank(configAppPath)) {
 					contextPath = configAppPath;
 				}
-				if (singleWar) {
+				if (singleWar && profile.isSingleAppRoot()) {
 					contextPath = ROOT_APP_PATH;
 				}
 				Application context = new Application(Application.SESSIONS | Application.SECURITY);
@@ -102,7 +102,7 @@ public class JettyServer extends AbstractServer {
 				context.setWar(file.getAbsolutePath());
 				context.setParentLoaderPriority(true);
 				context.setExtractWAR(true);
-				File tmp = new File(Temp_Directory, guid());
+				File tmp = new File(TEMP_DIRECTORY, guid());
 				if (!tmp.exists()) {
 					tmp.mkdirs();
 				}
