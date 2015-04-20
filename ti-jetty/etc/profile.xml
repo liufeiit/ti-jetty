@@ -2,7 +2,7 @@
 <server redis-session-enable="false" dump-std-err="false" 
 	token-expires-in-sec="5184000"  rollback-enable="false" backup-log="false" single-app-root="true">
 	
-	<context-mapping path="*" mapping=""/>
+	<context-mapping path="*" mapping="*"/>
 	
 	<connector port="8080" enable="true" accept-queue-size="200" max-idle-time="30000" />
 	<connector port="8081" enable="false" accept-queue-size="200" max-idle-time="30000" />
