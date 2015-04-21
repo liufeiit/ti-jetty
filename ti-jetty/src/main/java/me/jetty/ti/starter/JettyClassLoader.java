@@ -14,7 +14,7 @@ import java.net.URLClassLoader;
  */
 public class JettyClassLoader extends URLClassLoader {
 
-	public JettyClassLoader(ClassLoader parent, File libDir) throws MalformedURLException {
+	JettyClassLoader(ClassLoader parent, File libDir) throws MalformedURLException {
 		super(new URL[] { libDir.toURI().toURL() }, parent);
 		File[] jars = libDir.listFiles(new FilenameFilter() {
 			public boolean accept(File dir, String name) {
@@ -36,7 +36,7 @@ public class JettyClassLoader extends URLClassLoader {
 				continue;
 			}
 			URL jar = jars[i].toURI().toURL();
-			System.err.println("Loading Jar : " + jar);
+			System.err.println("JettyClassLoader loading Jar : " + jar);
 			addURL(jar);
 		}
 	}

@@ -1,4 +1,4 @@
-package me.jetty.ti.srv;
+package me.jetty.ti.server;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -9,6 +9,9 @@ import java.util.List;
 import me.jetty.ti.etc.Connector;
 import me.jetty.ti.etc.ThreadPool;
 import me.jetty.ti.etc.SslConnector;
+import me.jetty.ti.server.handler.StartedEventHandler;
+import me.jetty.ti.server.handler.StartingEventHandler;
+import me.jetty.ti.server.handler.StopedEventHandler;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jetty.jmx.MBeanContainer;
@@ -26,7 +29,7 @@ import org.eclipse.jetty.util.thread.QueuedThreadPool;
 public class JettyServer extends AbstractServer {
 
 	private Server server;
-	
+
 	public static JettyServer JettyServerInstance;
 
 	public JettyServer() {
@@ -34,6 +37,7 @@ public class JettyServer extends AbstractServer {
 	}
 
 	protected void start0() throws Exception {
+		startingEventCaller();
 		server = new Server();
 		MBeanContainer mbContainer = new MBeanContainer(ManagementFactory.getPlatformMBeanServer());
 		server.addBean(mbContainer, true);
@@ -60,7 +64,6 @@ public class JettyServer extends AbstractServer {
 			}
 		}
 		server.setConnectors(connectors.toArray(new SelectChannelConnector[connectors.size()]));
-
 		QueuedThreadPool threadPool = new QueuedThreadPool();
 		ThreadPool pool = profile.getThreadPool();
 		threadPool.setMaxThreads(pool.getMaxThreads());
@@ -73,7 +76,6 @@ public class JettyServer extends AbstractServer {
 		threadPool.setName(pool.getName());
 		threadPool.setThreadsPriority(Thread.NORM_PRIORITY);
 		server.setThreadPool(threadPool);
-
 		File[] apps = APPS_DIRECTORY.listFiles(new FileFilter() {
 			@Override
 			public boolean accept(File file) {
@@ -83,9 +85,7 @@ public class JettyServer extends AbstractServer {
 				return true;
 			}
 		});
-
 		ContextHandlerCollection contexts = new ContextHandlerCollection();
-
 		if (apps != null) {
 			boolean singleWar = (apps.length == 1);
 			for (File file : apps) {
@@ -112,9 +112,7 @@ public class JettyServer extends AbstractServer {
 				contexts.addHandler(context);
 			}
 		}
-
 		server.setHandler(contexts);
-
 		log.info("Starting Jetty Server ...");
 		server.setStopAtShutdown(true);
 		server.setSendServerVersion(true);
@@ -123,46 +121,57 @@ public class JettyServer extends AbstractServer {
 			server.dumpStdErr();
 		}
 		log.info("Jetty Server Started Success.");
-		
-		startedCall();
-		
+		startedEventCaller();
 		server.join();
 	}
-	
-	private void startedCall() {
-		if(startedCallbacks.isEmpty()) {
+
+	private void startingEventCaller() {
+		if (startingEventHandlers.isEmpty()) {
 			return;
 		}
-		for(ServerStartedCallback call : startedCallbacks) {
+		for (StartingEventHandler handler : startingEventHandlers) {
 			try {
-				call.call(this);
+				handler.starting(this);
 			} catch (Exception e) {
-				log.warn("ServerStartedCallback Invoking Error.", e);
+				log.warn("StartingEventHandler Invoking Error.", e);
 			}
 		}
 	}
-	
-	private void stopedCall() {
-		if(stopedCallbacks.isEmpty()) {
+
+	private void startedEventCaller() {
+		if (startedEventHandlers.isEmpty()) {
 			return;
 		}
-		for(ServerStopedCallback call : stopedCallbacks) {
+		for (StartedEventHandler handler : startedEventHandlers) {
 			try {
-				call.call();
+				handler.started(this);
 			} catch (Exception e) {
-				log.warn("ServerStopedCallback Invoking Error.", e);
+				log.warn("StartedEventHandler Invoking Error.", e);
 			}
 		}
 	}
-	
+
+	private void stopedEventCall() {
+		if (stopedEventHandlers.isEmpty()) {
+			return;
+		}
+		for (StopedEventHandler handler : stopedEventHandlers) {
+			try {
+				handler.stoped();
+			} catch (Exception e) {
+				log.warn("StopedEventHandler Invoking Error.", e);
+			}
+		}
+	}
+
 	protected void stop0() throws Exception {
 		log.info("Stoping Jetty Server ...");
 		try {
 			server.stop();
 			server = null;
-			stopedCall();
-			stopedCallbacks.clear();
-			startedCallbacks.clear();
+			stopedEventCall();
+			stopedEventHandlers.clear();
+			startedEventHandlers.clear();
 		} catch (Exception e) {
 			log.warn("Jetty Server Stop Error.", e);
 		}

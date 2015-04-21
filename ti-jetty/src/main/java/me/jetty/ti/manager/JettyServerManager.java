@@ -29,9 +29,9 @@ import javax.swing.JOptionPane;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
-import me.jetty.ti.srv.Server;
-import me.jetty.ti.srv.ServerStartedCallback;
-import me.jetty.ti.srv.ServerStopedCallback;
+import me.jetty.ti.server.Server;
+import me.jetty.ti.server.handler.StartedEventHandler;
+import me.jetty.ti.server.handler.StopedEventHandler;
 import me.jetty.ti.utils.DesktopUtil;
 import me.jetty.ti.utils.ProfileHolder;
 import me.jetty.ti.utils.ResourceUtils;
@@ -155,33 +155,33 @@ public class JettyServerManager extends Window implements ActionListener, MouseL
 			}
 			if (start) {
 				if (!JettyStarterUtils.isStarted()) {
-					JettyStarterUtils.startJetty(new ServerStartedCallback() {
+					JettyStarterUtils.startJetty(new StartedEventHandler() {
 						@Override
-						public void call(Server server) throws Exception {
+						public void started(Server server) throws Exception {
 							JettyServerManager.JETTY_SERVER_MANAGER.disnabledStartButton();
 							JettyServerManager.JETTY_SERVER_MANAGER.hideJettyServer();
 							String url = "http://localhost:" + ProfileHolder.getPort() + "/";
 							DesktopUtil.browseAndWarn(url, JettyServerManager.JETTY_SERVER_MANAGER);
 						}
-					}, new ServerStopedCallback() {
+					}, new StopedEventHandler() {
 						@Override
-						public void call() {
+						public void stoped() {
 							JettyServerManager.JETTY_SERVER_MANAGER.enabledStartButton();
 						}
 					});
 				} else {
 					JettyStarterUtils.stopJetty();
-					JettyStarterUtils.startJetty(new ServerStartedCallback() {
+					JettyStarterUtils.startJetty(new StartedEventHandler() {
 						@Override
-						public void call(Server server) throws Exception {
+						public void started(Server server) throws Exception {
 							JettyServerManager.JETTY_SERVER_MANAGER.disnabledStartButton();
 							JettyServerManager.JETTY_SERVER_MANAGER.hideJettyServer();
 							String url = "http://localhost:" + ProfileHolder.getPort() + "/";
 							DesktopUtil.browseAndWarn(url, JettyServerManager.JETTY_SERVER_MANAGER);
 						}
-					}, new ServerStopedCallback() {
+					}, new StopedEventHandler() {
 						@Override
-						public void call() {
+						public void stoped() {
 							JettyServerManager.JETTY_SERVER_MANAGER.enabledStartButton();
 						}
 					});

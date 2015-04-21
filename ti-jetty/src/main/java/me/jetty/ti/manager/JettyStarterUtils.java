@@ -1,8 +1,8 @@
 package me.jetty.ti.manager;
 
-import me.jetty.ti.srv.JettyServer;
-import me.jetty.ti.srv.ServerStartedCallback;
-import me.jetty.ti.srv.ServerStopedCallback;
+import me.jetty.ti.server.JettyServer;
+import me.jetty.ti.server.handler.StartedEventHandler;
+import me.jetty.ti.server.handler.StopedEventHandler;
 import me.jetty.ti.starter.JettyStarter;
 import me.jetty.ti.starter.ServerStarter;
 
@@ -19,15 +19,15 @@ public class JettyStarterUtils {
 	
 	private static final Logger log = Log.getLogger(JettyStarterUtils.class);
 	
-	public static void startJetty(ServerStartedCallback startedCaller, ServerStopedCallback stopedCaller) {
+	public static void startJetty(StartedEventHandler startedEventHandler, StopedEventHandler stopedEventHandler) {
 		try {
 			Class<?> jettyStarterClass = new ServerStarter().loader();
 			JettyStarter jettyStarter = (JettyStarter) jettyStarterClass.newInstance();
-			if(startedCaller != null) {
-				JettyServer.JettyServerInstance.addStartedCallback(startedCaller);
+			if(startedEventHandler != null) {
+				JettyServer.JettyServerInstance.addStartedEventHandler(startedEventHandler);
 			}
-			if(stopedCaller != null) {
-				JettyServer.JettyServerInstance.addStopedCallback(stopedCaller);
+			if(stopedEventHandler != null) {
+				JettyServer.JettyServerInstance.addStopedEventHandler(stopedEventHandler);
 			}
 			jettyStarter.start();
 		} catch (Exception e) {

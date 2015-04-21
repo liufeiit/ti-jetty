@@ -1,4 +1,4 @@
-package me.jetty.ti.srv;
+package me.jetty.ti.server;
 
 import java.io.File;
 import java.util.HashMap;
@@ -12,6 +12,9 @@ import me.jetty.ti.etc.ContextMapping;
 import me.jetty.ti.etc.JettyProfile;
 import me.jetty.ti.etc.Session;
 import me.jetty.ti.etc.SslConnector;
+import me.jetty.ti.server.handler.StartedEventHandler;
+import me.jetty.ti.server.handler.StartingEventHandler;
+import me.jetty.ti.server.handler.StopedEventHandler;
 import me.jetty.ti.utils.ProfileHolder;
 import me.jetty.ti.utils.RedisUtils;
 
@@ -44,13 +47,15 @@ public abstract class AbstractServer implements Server {
 
 	protected final Logger log = Log.getLogger(getClass());
 
-	protected JettyProfile profile;
+	protected final JettyProfile profile;
 
 	protected final Map<String, String> contextMapping;
 	
-	protected final LinkedList<ServerStartedCallback> startedCallbacks;
+	protected final LinkedList<StartingEventHandler> startingEventHandlers;
 	
-	protected final LinkedList<ServerStopedCallback> stopedCallbacks;
+	protected final LinkedList<StartedEventHandler> startedEventHandlers;
+	
+	protected final LinkedList<StopedEventHandler> stopedEventHandlers;
 
 	public AbstractServer() {
 		super();
@@ -64,8 +69,9 @@ public abstract class AbstractServer implements Server {
 			}
 		}
 		init();
-		startedCallbacks = new LinkedList<ServerStartedCallback>();
-		stopedCallbacks = new LinkedList<ServerStopedCallback>();
+		startingEventHandlers = new LinkedList<StartingEventHandler>();
+		startedEventHandlers = new LinkedList<StartedEventHandler>();
+		stopedEventHandlers = new LinkedList<StopedEventHandler>();
 	}
 
 	@Override
@@ -85,14 +91,20 @@ public abstract class AbstractServer implements Server {
 	}
 
 	@Override
-	public Server addStartedCallback(ServerStartedCallback callback) {
-		startedCallbacks.add(callback);
+	public Server addStartingEventHandler(StartingEventHandler startingEventHandler) {
+		startingEventHandlers.add(startingEventHandler);
 		return this;
 	}
 
 	@Override
-	public Server addStopedCallback(ServerStopedCallback callback) {
-		stopedCallbacks.add(callback);
+	public Server addStartedEventHandler(StartedEventHandler startedEventHandler) {
+		startedEventHandlers.add(startedEventHandler);
+		return this;
+	}
+
+	@Override
+	public Server addStopedEventHandler(StopedEventHandler stopedEventHandler) {
+		stopedEventHandlers.add(stopedEventHandler);
 		return this;
 	}
 

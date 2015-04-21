@@ -1,6 +1,10 @@
-package me.jetty.ti.srv;
+package me.jetty.ti.server;
 
 import java.io.File;
+
+import me.jetty.ti.server.handler.StartedEventHandler;
+import me.jetty.ti.server.handler.StartingEventHandler;
+import me.jetty.ti.server.handler.StopedEventHandler;
 
 /**
  * @author 刘飞 E-mail:liufei_it@126.com
@@ -24,6 +28,7 @@ public interface Server {
 	
 	boolean isStarted();
 	
-	Server addStartedCallback(ServerStartedCallback callback);
-	Server addStopedCallback(ServerStopedCallback callback);
+	Server addStartingEventHandler(StartingEventHandler startingEventHandler);
+	Server addStartedEventHandler(StartedEventHandler startedEventHandler);
+	Server addStopedEventHandler(StopedEventHandler stopedEventHandler);
 }
