@@ -6,6 +6,7 @@ import java.net.URL;
 import java.security.ProtectionDomain;
 
 import org.eclipse.jetty.deploy.providers.WebAppProvider;
+import org.eclipse.jetty.http.MimeTypes;
 import org.eclipse.jetty.jmx.MBeanContainer;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
@@ -89,12 +90,18 @@ public class JettyMain {
 
 	public static void main122(String[] args) throws Exception {
 		Server server = new Server(8080);
+		
 		ResourceHandler resourceHandler = new ResourceHandler();
 		resourceHandler.setDirectoriesListed(true);
 		resourceHandler.setWelcomeFiles(new String[] { "index.html" });
 		resourceHandler.setResourceBase("/Users/yp");
 		resourceHandler.setStylesheet("");
 		resourceHandler.setEtags(true);
+		
+		resourceHandler.setAliases(true);
+		resourceHandler.setCacheControl("");
+//		resourceHandler.setMimeTypes(MimeTypes.);
+		
 		HandlerList handlers = new HandlerList();
 		handlers.setHandlers(new Handler[] { resourceHandler });
 		server.setHandler(handlers);

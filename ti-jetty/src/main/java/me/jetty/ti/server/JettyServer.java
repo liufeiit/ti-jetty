@@ -17,6 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jetty.jmx.MBeanContainer;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
+import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.server.nio.SelectChannelConnector;
 import org.eclipse.jetty.server.ssl.SslSelectChannelConnector;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
@@ -110,6 +111,10 @@ public class JettyServer extends AbstractServer {
 				contexts.addHandler(context);
 			}
 		}
+		
+		ResourceHandler resourceHandler = new ResourceHandler();
+		contexts.addHandler(resourceHandler);
+		
 		server.setHandler(contexts);
 		log.info("Starting Jetty Server ...");
 		server.setStopAtShutdown(true);
