@@ -25,6 +25,15 @@ import org.eclipse.jetty.webapp.WebAppContext;
 
 /**
  * 
+ * https://wiki.eclipse.org/Jetty/Tutorial/Embedding_Jetty
+ * 
+ * http://stackoverflow.com/questions/14958251/map-jetty-resourcehandler-to-a-url
+ * 
+ * https://github.com/eclipse/jetty.project/blob/master/examples/embedded/src/main/java/org/eclipse/jetty/embedded/SecuredHelloHandler.java
+ * 
+ * http://www.programcreek.com/java-api-examples/index.php?api=org.eclipse.jetty.server.handler.ResourceHandler
+ * 
+ * 
  * @author john.liu E-mail:fei.liu@yeepay.com
  * @version 1.0.0
  * @since 2014年12月13日 下午7:32:48
