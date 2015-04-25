@@ -128,9 +128,9 @@ public class JettyMain {
 	    context.setContextPath("/");
 	 
 	    ProtectionDomain protectionDomain = JettyMain.class.getProtectionDomain();
-	    URL location = protectionDomain.getCodeSource().getLocation();
+		URL location = protectionDomain.getCodeSource().getLocation();
 	    context.setWar(location.toExternalForm());
-	 
+	    System.out.println(location);
 	    server.setHandler(context);
 	    try {
 	      server.start();

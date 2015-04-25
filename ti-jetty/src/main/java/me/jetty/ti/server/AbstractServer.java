@@ -1,6 +1,8 @@
 package me.jetty.ti.server;
 
 import java.io.File;
+import java.net.URL;
+import java.security.ProtectionDomain;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -72,6 +74,9 @@ public abstract class AbstractServer implements Server {
 		startingEventHandlers = new LinkedList<StartingEventHandler>();
 		startedEventHandlers = new LinkedList<StartedEventHandler>();
 		stopedEventHandlers = new LinkedList<StopedEventHandler>();
+		ProtectionDomain protectionDomain = getClass().getProtectionDomain();
+	    URL location = protectionDomain.getCodeSource().getLocation();
+		log.warn("Server Location : " + location);
 	}
 
 	@Override
