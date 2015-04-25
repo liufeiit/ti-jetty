@@ -4,8 +4,15 @@
 	
 	<context-mapping path="*" mapping="*"/>
 	
+	<resource enable="true" context="/" directories-listed="true" 
+		welcome-files="index.html,index.php" 
+		base-resource="." stylesheet="" etags="true" aliases="true" 
+		cache-control="no-store,no-cache,must-revalidate"/>
+	
 	<connector port="8080" enable="true" accept-queue-size="200" max-idle-time="30000" />
+	
 	<connector port="8081" enable="false" accept-queue-size="200" max-idle-time="30000" />
+	
 	<ssl-connector port="443" enable="false" 
 		accept-queue-size="200" max-idle-time="30000" client-auth="false" cert-alias="jetty">
 		<key-store-path>/root/.ssl/jetty.keystore</key-store-path>
@@ -14,6 +21,7 @@
 		<trust-store-path></trust-store-path>
 		<trust-store-password></trust-store-password>
 	</ssl-connector>
+	
 	<ssl-connector port="8443" enable="false" 
 		accept-queue-size="200" max-idle-time="30000" client-auth="false" cert-alias="jetty">
 		<key-store-path>/root/.ssl/jetty.keystore</key-store-path>
@@ -22,6 +30,7 @@
 		<trust-store-path></trust-store-path>
 		<trust-store-password></trust-store-password>
 	</ssl-connector>
+	
 	<thread-pool name="Jetty.QueuedThreadPool.0001" daemon="true">
 		<min-threads>5</min-threads>
 		<max-threads>200</max-threads>
@@ -29,6 +38,7 @@
 		<max-idle-time-ms>5000</max-idle-time-ms>
 		<max-stop-time-ms>5000</max-stop-time-ms>
 	</thread-pool>
+	
 	<session>
 		<domain>127.0.0.1</domain>
 		<path>/</path>
@@ -38,7 +48,8 @@
 		<save-interval>10</save-interval>
 		<scavenger-interval>30000</scavenger-interval>
 	</session>
-	<redis host="127.0.0.1" port="6379">
+	
+	<redis host="redisServer" port="6379">
 		<max-active>500</max-active>
 		<min-idle>5</min-idle>
 		<max-idle>20</max-idle>

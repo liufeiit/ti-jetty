@@ -1,13 +1,12 @@
 package me.jetty.ti.server;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.List;
 
 import me.jetty.ti.etc.Connector;
-import me.jetty.ti.etc.ThreadPool;
+import me.jetty.ti.etc.Resource;
 import me.jetty.ti.etc.SslConnector;
 import me.jetty.ti.server.handler.StartedEventHandler;
 import me.jetty.ti.server.handler.StartingEventHandler;
@@ -16,11 +15,12 @@ import me.jetty.ti.server.handler.StopedEventHandler;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jetty.jmx.MBeanContainer;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
+import org.eclipse.jetty.server.handler.DefaultHandler;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.server.nio.SelectChannelConnector;
 import org.eclipse.jetty.server.ssl.SslSelectChannelConnector;
-import org.eclipse.jetty.util.thread.QueuedThreadPool;
 
 /**
  * @author 刘飞 E-mail:liufei_it@126.com
@@ -63,29 +63,10 @@ public class JettyServer extends AbstractServer {
 			}
 		}
 		server.setConnectors(connectors.toArray(new SelectChannelConnector[connectors.size()]));
-		QueuedThreadPool threadPool = new QueuedThreadPool();
-		ThreadPool pool = profile.getThreadPool();
-		threadPool.setMaxThreads(pool.getMaxThreads());
-		threadPool.setMinThreads(pool.getMinThreads());
-		threadPool.setMaxQueued(pool.getMaxQueued());
-		threadPool.setMaxStopTimeMs(pool.getMaxStopTimeMs());
-		threadPool.setMaxIdleTimeMs(pool.getMaxIdleTimeMs());
-		threadPool.setDaemon(pool.isDaemon());
-		threadPool.setDetailedDump(true);
-		threadPool.setName(pool.getName());
-		threadPool.setThreadsPriority(Thread.NORM_PRIORITY);
-		server.setThreadPool(threadPool);
-		File[] apps = APPS_DIRECTORY.listFiles(new FileFilter() {
-			@Override
-			public boolean accept(File file) {
-				if (file.isFile()) {
-					return file.getName().toLowerCase().endsWith(WAR_LOWERCASE_SUFFIX);
-				}
-				return true;
-			}
-		});
+		server.setThreadPool(newThreadPool());
+		File[] apps = scanWebapps();
 		ContextHandlerCollection contexts = new ContextHandlerCollection();
-		if (apps != null) {
+		if (apps != null && apps.length > 0) {
 			boolean singleWar = (apps.length == 1);
 			for (File file : apps) {
 				String contextPath = file.getName();
@@ -111,18 +92,38 @@ public class JettyServer extends AbstractServer {
 				contexts.addHandler(context);
 			}
 		}
-		
-		ResourceHandler resourceHandler = new ResourceHandler();
-		contexts.addHandler(resourceHandler);
-		
+		List<Resource> resources = profile.getResources();
+		if (resources != null && !resources.isEmpty()) {
+			for (Resource resource : resources) {
+				if (!resource.isEnable()) {
+					continue;
+				}
+				String[] welcomeFiles = null;
+				if (StringUtils.isNotBlank(resource.getWelcomeFiles())) {
+					welcomeFiles = StringUtils.split(resource.getWelcomeFiles(), DOT);
+				}
+				ContextHandler context = new ContextHandler();
+				context.setContextPath(resource.getContext());
+				ResourceHandler handler = new ResourceHandler();
+				handler.setDirectoriesListed(resource.isDirectoriesListed());
+				handler.setWelcomeFiles(welcomeFiles);
+				handler.setResourceBase(resource.getBaseResource());
+				handler.setStylesheet(resource.getStylesheet());
+				handler.setEtags(resource.isEtags());
+				handler.setAliases(resource.isAliases());
+				handler.setCacheControl(resource.getCacheControl());
+				context.setHandler(handler);
+				contexts.addHandler(context);
+			}
+		}
+		contexts.addHandler(new DefaultHandler());
 		server.setHandler(contexts);
 		log.info("Starting Jetty Server ...");
+		server.setDumpAfterStart(profile.isDumpStdErr());
 		server.setStopAtShutdown(true);
 		server.setSendServerVersion(true);
+		server.setSendDateHeader(true);
 		server.start();
-		if (profile.isDumpStdErr()) {
-			server.dumpStdErr();
-		}
 		log.info("Jetty Server Started Success.");
 		startedEventCaller();
 		server.join();

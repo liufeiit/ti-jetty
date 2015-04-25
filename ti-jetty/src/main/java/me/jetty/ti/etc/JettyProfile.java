@@ -23,6 +23,9 @@ public class JettyProfile {
 
 	@XStreamImplicit(itemFieldName = "ssl-connector")
 	private List<SslConnector> sslConnectors;
+	
+	@XStreamImplicit(itemFieldName = "resource")
+	private List<Resource> resources;
 
 	@XStreamAlias("thread-pool")
 	private ThreadPool threadPool;
@@ -59,6 +62,14 @@ public class JettyProfile {
 	@XStreamAsAttribute
 	@XStreamAlias("token-expires-in-sec")
 	private int tokenExpiresInSec = 5184000;
+
+	public List<Resource> getResources() {
+		return resources;
+	}
+
+	public void setResources(List<Resource> resources) {
+		this.resources = resources;
+	}
 
 	public boolean isSingleAppRoot() {
 		return singleAppRoot;

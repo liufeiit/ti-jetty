@@ -1,6 +1,7 @@
 package me.jetty.ti.server;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.net.URL;
 import java.security.ProtectionDomain;
 import java.util.HashMap;
@@ -14,6 +15,7 @@ import me.jetty.ti.etc.ContextMapping;
 import me.jetty.ti.etc.JettyProfile;
 import me.jetty.ti.etc.Session;
 import me.jetty.ti.etc.SslConnector;
+import me.jetty.ti.etc.ThreadPool;
 import me.jetty.ti.server.handler.StartedEventHandler;
 import me.jetty.ti.server.handler.StartingEventHandler;
 import me.jetty.ti.server.handler.StopedEventHandler;
@@ -33,6 +35,7 @@ import org.eclipse.jetty.server.ssl.SslSelectChannelConnector;
 import org.eclipse.jetty.util.log.Log;
 import org.eclipse.jetty.util.log.Logger;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
+import org.eclipse.jetty.util.thread.QueuedThreadPool;
 
 import redis.clients.jedis.JedisPool;
 
@@ -52,11 +55,11 @@ public abstract class AbstractServer implements Server {
 	protected final JettyProfile profile;
 
 	protected final Map<String, String> contextMapping;
-	
+
 	protected final LinkedList<StartingEventHandler> startingEventHandlers;
-	
+
 	protected final LinkedList<StartedEventHandler> startedEventHandlers;
-	
+
 	protected final LinkedList<StopedEventHandler> stopedEventHandlers;
 
 	public AbstractServer() {
@@ -75,7 +78,7 @@ public abstract class AbstractServer implements Server {
 		startedEventHandlers = new LinkedList<StartedEventHandler>();
 		stopedEventHandlers = new LinkedList<StopedEventHandler>();
 		ProtectionDomain protectionDomain = getClass().getProtectionDomain();
-	    URL location = protectionDomain.getCodeSource().getLocation();
+		URL location = protectionDomain.getCodeSource().getLocation();
 		log.warn("Server Location : " + location);
 	}
 
@@ -141,6 +144,34 @@ public abstract class AbstractServer implements Server {
 		if (!APPS_DIRECTORY.exists()) {
 			APPS_DIRECTORY.mkdirs();
 		}
+	}
+
+	protected File[] scanWebapps() {
+		File[] apps = APPS_DIRECTORY.listFiles(new FileFilter() {
+			@Override
+			public boolean accept(File file) {
+				if (file.isFile()) {
+					return file.getName().toLowerCase().endsWith(WAR_LOWERCASE_SUFFIX);
+				}
+				return true;
+			}
+		});
+		return apps;
+	}
+
+	protected QueuedThreadPool newThreadPool() {
+		QueuedThreadPool threadPool = new QueuedThreadPool();
+		ThreadPool pool = profile.getThreadPool();
+		threadPool.setMaxThreads(pool.getMaxThreads());
+		threadPool.setMinThreads(pool.getMinThreads());
+		threadPool.setMaxQueued(pool.getMaxQueued());
+		threadPool.setMaxStopTimeMs(pool.getMaxStopTimeMs());
+		threadPool.setMaxIdleTimeMs(pool.getMaxIdleTimeMs());
+		threadPool.setDaemon(pool.isDaemon());
+		threadPool.setDetailedDump(true);
+		threadPool.setName(pool.getName());
+		threadPool.setThreadsPriority(Thread.NORM_PRIORITY);
+		return threadPool;
 	}
 
 	protected SelectChannelConnector newConnector(Connector conn) {
