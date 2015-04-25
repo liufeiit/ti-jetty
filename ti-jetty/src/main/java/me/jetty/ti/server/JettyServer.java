@@ -30,8 +30,6 @@ public class JettyServer extends AbstractServer {
 
 	private Server server;
 
-	public static JettyServer JettyServerInstance;
-
 	public JettyServer() {
 		super();
 	}

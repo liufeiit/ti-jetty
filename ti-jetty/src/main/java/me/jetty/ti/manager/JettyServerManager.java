@@ -29,9 +29,11 @@ import javax.swing.JOptionPane;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
+import me.jetty.ti.server.JettyServer;
 import me.jetty.ti.server.Server;
 import me.jetty.ti.server.handler.StartedEventHandler;
 import me.jetty.ti.server.handler.StopedEventHandler;
+import me.jetty.ti.starter.ServerStarter;
 import me.jetty.ti.utils.DesktopUtil;
 import me.jetty.ti.utils.ProfileHolder;
 import me.jetty.ti.utils.ResourceUtils;
@@ -63,6 +65,8 @@ public class JettyServerManager extends Window implements ActionListener, MouseL
 	private MenuItem exitItem = new MenuItem("Exit");
 
 	private TrayIcon trayicon;
+
+	private Server server;
 
 	public static void main(String[] args) {
 		JettyServerManager.showJettyServer(true);
@@ -97,6 +101,45 @@ public class JettyServerManager extends Window implements ActionListener, MouseL
 		setCursor(Cursor.getPredefinedCursor(12));
 		setContentPane(container);
 		validate();
+	}
+
+	private void loadJettyServer() throws Exception {
+		log.warn("Loading JettyServer...");
+		Class<?> jettyServerClass = new ServerStarter().loader(JettyServer.class.getName());
+		server = (Server) jettyServerClass.newInstance();
+		log.warn("NewInstance JettyServer...");
+	}
+
+	private void startJettyServer() throws Exception {
+		loadJettyServer();
+		server.addStartedEventHandler(new StartedEventHandler() {
+			@Override
+			public void started(Server server) throws Exception {
+				JettyServerManager.JETTY_SERVER_MANAGER.disnabledStartButton();
+				JettyServerManager.JETTY_SERVER_MANAGER.hideJettyServer();
+				String url = "http://localhost:" + ProfileHolder.getPort() + "/";
+				DesktopUtil.browseAndWarn(url, JettyServerManager.JETTY_SERVER_MANAGER);
+			}
+		});
+		server.addStopedEventHandler(new StopedEventHandler() {
+			@Override
+			public void stoped() {
+				JettyServerManager.JETTY_SERVER_MANAGER.enabledStartButton();
+			}
+		});
+		server.start();
+	}
+
+	private void stopJettyServer() throws Exception {
+		server.stop();
+		server = null;
+	}
+
+	private boolean isStarted() {
+		if (server != null) {
+			return server.isStarted();
+		}
+		return false;
 	}
 
 	private void initComponents() {
@@ -154,38 +197,10 @@ public class JettyServerManager extends Window implements ActionListener, MouseL
 				JettyServerManager.JETTY_SERVER_MANAGER.setVisible(true);
 			}
 			if (start) {
-				if (!JettyStarterUtils.isStarted()) {
-					JettyStarterUtils.startJetty(new StartedEventHandler() {
-						@Override
-						public void started(Server server) throws Exception {
-							JettyServerManager.JETTY_SERVER_MANAGER.disnabledStartButton();
-							JettyServerManager.JETTY_SERVER_MANAGER.hideJettyServer();
-							String url = "http://localhost:" + ProfileHolder.getPort() + "/";
-							DesktopUtil.browseAndWarn(url, JettyServerManager.JETTY_SERVER_MANAGER);
-						}
-					}, new StopedEventHandler() {
-						@Override
-						public void stoped() {
-							JettyServerManager.JETTY_SERVER_MANAGER.enabledStartButton();
-						}
-					});
-				} else {
-					JettyStarterUtils.stopJetty();
-					JettyStarterUtils.startJetty(new StartedEventHandler() {
-						@Override
-						public void started(Server server) throws Exception {
-							JettyServerManager.JETTY_SERVER_MANAGER.disnabledStartButton();
-							JettyServerManager.JETTY_SERVER_MANAGER.hideJettyServer();
-							String url = "http://localhost:" + ProfileHolder.getPort() + "/";
-							DesktopUtil.browseAndWarn(url, JettyServerManager.JETTY_SERVER_MANAGER);
-						}
-					}, new StopedEventHandler() {
-						@Override
-						public void stoped() {
-							JettyServerManager.JETTY_SERVER_MANAGER.enabledStartButton();
-						}
-					});
+				if (JettyServerManager.JETTY_SERVER_MANAGER.isStarted()) {
+					JettyServerManager.JETTY_SERVER_MANAGER.stopJettyServer();
 				}
+				JettyServerManager.JETTY_SERVER_MANAGER.startJettyServer();
 			}
 		} catch (Exception e) {
 			log.warn("Jetty ServerManager Init Error.", e);
@@ -229,8 +244,12 @@ public class JettyServerManager extends Window implements ActionListener, MouseL
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
-					JettyStarterUtils.stopJetty();
-					JettyServerManager.showJettyServer(true);
+					try {
+						JettyServerManager.JETTY_SERVER_MANAGER.stopJettyServer();
+						JettyServerManager.showJettyServer(true);
+					} catch (Exception e) {
+						log.warn("Jetty Server Restart Error.", e);
+					}
 				}
 			}).start();
 		} else if (eventObject == min) {
@@ -241,8 +260,12 @@ public class JettyServerManager extends Window implements ActionListener, MouseL
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
-					JettyStarterUtils.stopJetty();
-					JettyServerManager.showJettyServer(true);
+					try {
+						JettyServerManager.JETTY_SERVER_MANAGER.stopJettyServer();
+						JettyServerManager.showJettyServer(true);
+					} catch (Exception e) {
+						log.warn("Jetty Server Restart Error.", e);
+					}
 				}
 			}).start();
 		} else if (eventObject == exitItem) {
@@ -252,9 +275,13 @@ public class JettyServerManager extends Window implements ActionListener, MouseL
 				new Thread(new Runnable() {
 					@Override
 					public void run() {
-						log.warn("正在关闭服务器...");
-						JettyStarterUtils.stopJetty();
-						log.warn("服务器已经正常关闭...");
+						try {
+							log.warn("正在关闭服务器...");
+							JettyServerManager.JETTY_SERVER_MANAGER.stopJettyServer();
+							log.warn("服务器已经正常关闭...");
+						} catch (Exception e) {
+							log.warn("Jetty Server Restart Error.", e);
+						}
 					}
 				}).start();
 				System.exit(0);

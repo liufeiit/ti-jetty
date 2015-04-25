@@ -11,6 +11,8 @@ import java.io.InputStream;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Pack200;
 
+import me.jetty.ti.server.JettyServer;
+
 import org.eclipse.jetty.util.log.Log;
 import org.eclipse.jetty.util.log.Logger;
 
@@ -27,22 +29,22 @@ public class ServerStarter {
 
 	public static void main(String[] args) {
 		try {
-			Class<?> jettyStarterClass = new ServerStarter().loader();
-			JettyStarter jettyStarter = (JettyStarter) jettyStarterClass.newInstance();
-			jettyStarter.start();
+			Class<?> jettyServerClass = new ServerStarter().loader(JettyServer.class.getName());
+			JettyServer jettyServer = (JettyServer) jettyServerClass.newInstance();
+			jettyServer.start();
 		} catch (Exception e) {
 			log.warn("Jetty Server Started Error.", e);
 		}
 	}
 
-	public Class<?> loader() throws Exception {
+	@SuppressWarnings("unchecked")
+	public <T> Class<T> loader(String className) throws Exception {
 		final ClassLoader parent = findParentClassLoader();
 		File libDir = new File(DEFAULT_LIB_DIR);
 		unpackArchives(libDir, true);
 		ClassLoader loader = new JettyClassLoader(parent, libDir);
 		Thread.currentThread().setContextClassLoader(loader);
-		Class<?> jettyStarterClass = loader.loadClass(JettyStarter.class.getName());
-		return jettyStarterClass;
+		return (Class<T>) loader.loadClass(className);
 	}
 
 	private ClassLoader findParentClassLoader() {
