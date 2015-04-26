@@ -14,6 +14,7 @@ import me.jetty.ti.server.handler.StopedEventHandler;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jetty.jmx.MBeanContainer;
+import org.eclipse.jetty.plus.jndi.EnvEntry;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
@@ -40,7 +41,7 @@ public class JettyServer extends AbstractServer {
 		server = new Server();
 		MBeanContainer mbContainer = new MBeanContainer(ManagementFactory.getPlatformMBeanServer());
 		server.addBean(mbContainer, true);
-		new org.eclipse.jetty.plus.jndi.EnvEntry(server, "version", "1.0.0-Final", false);
+		new EnvEntry(server, "version", "1.0.0-Final", true);
 		List<SelectChannelConnector> connectors = new ArrayList<SelectChannelConnector>();
 		List<Connector> profileConnectors = profile.getConnectors();
 		if (profileConnectors != null && !profileConnectors.isEmpty()) {
