@@ -10,33 +10,13 @@
   <classpathentry kind="var" path="M2_REPO/org/eclipse/jetty/jetty-util/8.1.16.v20140903/jetty-util-8.1.16.v20140903.jar" sourcepath="M2_REPO/org/eclipse/jetty/jetty-util/8.1.16.v20140903/jetty-util-8.1.16.v20140903-sources.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/eclipse/jetty/jetty-http/8.1.16.v20140903/jetty-http-8.1.16.v20140903.jar" sourcepath="M2_REPO/org/eclipse/jetty/jetty-http/8.1.16.v20140903/jetty-http-8.1.16.v20140903-sources.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/eclipse/jetty/jetty-jsp/8.1.16.v20140903/jetty-jsp-8.1.16.v20140903.jar" sourcepath="M2_REPO/org/eclipse/jetty/jetty-jsp/8.1.16.v20140903/jetty-jsp-8.1.16.v20140903-sources.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/jetty/orbit/javax.servlet.jsp/2.2.0.v201112011158/javax.servlet.jsp-2.2.0.v201112011158.jar" sourcepath="M2_REPO/org/eclipse/jetty/orbit/javax.servlet.jsp/2.2.0.v201112011158/javax.servlet.jsp-2.2.0.v201112011158-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/E:/.m2/repository/org/eclipse/jetty/orbit/javax.servlet.jsp/2.2.0.v201112011158/javax.servlet.jsp-2.2.0.v201112011158-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/jetty/orbit/javax.servlet/3.0.0.v201112011016/javax.servlet-3.0.0.v201112011016.jar" sourcepath="M2_REPO/org/eclipse/jetty/orbit/javax.servlet/3.0.0.v201112011016/javax.servlet-3.0.0.v201112011016-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/E:/.m2/repository/org/eclipse/jetty/orbit/javax.servlet/3.0.0.v201112011016/javax.servlet-3.0.0.v201112011016-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/jetty/orbit/org.apache.jasper.glassfish/2.2.2.v201112011158/org.apache.jasper.glassfish-2.2.2.v201112011158.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/jetty/orbit/javax.servlet.jsp.jstl/1.2.0.v201105211821/javax.servlet.jsp.jstl-1.2.0.v201105211821.jar" sourcepath="M2_REPO/org/eclipse/jetty/orbit/javax.servlet.jsp.jstl/1.2.0.v201105211821/javax.servlet.jsp.jstl-1.2.0.v201105211821-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/E:/.m2/repository/org/eclipse/jetty/orbit/javax.servlet.jsp.jstl/1.2.0.v201105211821/javax.servlet.jsp.jstl-1.2.0.v201105211821-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/jetty/orbit/org.apache.taglibs.standard.glassfish/1.2.0.v201112081803/org.apache.taglibs.standard.glassfish-1.2.0.v201112081803.jar" sourcepath="M2_REPO/org/eclipse/jetty/orbit/org.apache.taglibs.standard.glassfish/1.2.0.v201112081803/org.apache.taglibs.standard.glassfish-1.2.0.v201112081803-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/E:/.m2/repository/org/eclipse/jetty/orbit/org.apache.taglibs.standard.glassfish/1.2.0.v201112081803/org.apache.taglibs.standard.glassfish-1.2.0.v201112081803-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/jetty/orbit/javax.el/2.2.0.v201108011116/javax.el-2.2.0.v201108011116.jar" sourcepath="M2_REPO/org/eclipse/jetty/orbit/javax.el/2.2.0.v201108011116/javax.el-2.2.0.v201108011116-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/E:/.m2/repository/org/eclipse/jetty/orbit/javax.el/2.2.0.v201108011116/javax.el-2.2.0.v201108011116-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/jetty/orbit/com.sun.el/2.2.0.v201108011116/com.sun.el-2.2.0.v201108011116.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/eclipse/jetty/orbit/javax.servlet.jsp/2.2.0.v201112011158/javax.servlet.jsp-2.2.0.v201112011158.jar" sourcepath="M2_REPO/org/eclipse/jetty/orbit/javax.servlet.jsp/2.2.0.v201112011158/javax.servlet.jsp-2.2.0.v201112011158-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/eclipse/jetty/orbit/javax.servlet/3.0.0.v201112011016/javax.servlet-3.0.0.v201112011016.jar" sourcepath="M2_REPO/org/eclipse/jetty/orbit/javax.servlet/3.0.0.v201112011016/javax.servlet-3.0.0.v201112011016-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/eclipse/jetty/orbit/org.apache.jasper.glassfish/2.2.2.v201112011158/org.apache.jasper.glassfish-2.2.2.v201112011158.jar" sourcepath="M2_REPO/org/eclipse/jetty/orbit/org.apache.jasper.glassfish/2.2.2.v201112011158/org.apache.jasper.glassfish-2.2.2.v201112011158-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/eclipse/jetty/orbit/javax.servlet.jsp.jstl/1.2.0.v201105211821/javax.servlet.jsp.jstl-1.2.0.v201105211821.jar" sourcepath="M2_REPO/org/eclipse/jetty/orbit/javax.servlet.jsp.jstl/1.2.0.v201105211821/javax.servlet.jsp.jstl-1.2.0.v201105211821-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/eclipse/jetty/orbit/org.apache.taglibs.standard.glassfish/1.2.0.v201112081803/org.apache.taglibs.standard.glassfish-1.2.0.v201112081803.jar" sourcepath="M2_REPO/org/eclipse/jetty/orbit/org.apache.taglibs.standard.glassfish/1.2.0.v201112081803/org.apache.taglibs.standard.glassfish-1.2.0.v201112081803-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/eclipse/jetty/orbit/javax.el/2.2.0.v201108011116/javax.el-2.2.0.v201108011116.jar" sourcepath="M2_REPO/org/eclipse/jetty/orbit/javax.el/2.2.0.v201108011116/javax.el-2.2.0.v201108011116-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/eclipse/jetty/orbit/com.sun.el/2.2.0.v201108011116/com.sun.el-2.2.0.v201108011116.jar" sourcepath="M2_REPO/org/eclipse/jetty/orbit/com.sun.el/2.2.0.v201108011116/com.sun.el-2.2.0.v201108011116-sources.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/eclipse/jetty/orbit/org.eclipse.jdt.core/3.7.1/org.eclipse.jdt.core-3.7.1.jar" sourcepath="M2_REPO/org/eclipse/jetty/orbit/org.eclipse.jdt.core/3.7.1/org.eclipse.jdt.core-3.7.1-sources.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/eclipse/jetty/jetty-websocket/8.1.16.v20140903/jetty-websocket-8.1.16.v20140903.jar" sourcepath="M2_REPO/org/eclipse/jetty/jetty-websocket/8.1.16.v20140903/jetty-websocket-8.1.16.v20140903-sources.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/eclipse/jetty/jetty-ajp/8.1.16.v20140903/jetty-ajp-8.1.16.v20140903.jar" sourcepath="M2_REPO/org/eclipse/jetty/jetty-ajp/8.1.16.v20140903/jetty-ajp-8.1.16.v20140903-sources.jar"/>
@@ -49,64 +29,60 @@
   <classpathentry kind="var" path="M2_REPO/org/eclipse/jetty/jetty-security/8.1.16.v20140903/jetty-security-8.1.16.v20140903.jar" sourcepath="M2_REPO/org/eclipse/jetty/jetty-security/8.1.16.v20140903/jetty-security-8.1.16.v20140903-sources.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/eclipse/jetty/jetty-jmx/8.1.16.v20140903/jetty-jmx-8.1.16.v20140903.jar" sourcepath="M2_REPO/org/eclipse/jetty/jetty-jmx/8.1.16.v20140903/jetty-jmx-8.1.16.v20140903-sources.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/eclipse/jetty/jetty-plus/8.1.16.v20140903/jetty-plus-8.1.16.v20140903.jar" sourcepath="M2_REPO/org/eclipse/jetty/jetty-plus/8.1.16.v20140903/jetty-plus-8.1.16.v20140903-sources.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/jetty/orbit/javax.transaction/1.1.1.v201105210645/javax.transaction-1.1.1.v201105210645.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/eclipse/jetty/orbit/javax.transaction/1.1.1.v201105210645/javax.transaction-1.1.1.v201105210645.jar" sourcepath="M2_REPO/org/eclipse/jetty/orbit/javax.transaction/1.1.1.v201105210645/javax.transaction-1.1.1.v201105210645-sources.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/eclipse/jetty/jetty-jndi/8.1.16.v20140903/jetty-jndi-8.1.16.v20140903.jar" sourcepath="M2_REPO/org/eclipse/jetty/jetty-jndi/8.1.16.v20140903/jetty-jndi-8.1.16.v20140903-sources.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/eclipse/jetty/orbit/javax.mail.glassfish/1.4.1.v201005082020/javax.mail.glassfish-1.4.1.v201005082020.jar" sourcepath="M2_REPO/org/eclipse/jetty/orbit/javax.mail.glassfish/1.4.1.v201005082020/javax.mail.glassfish-1.4.1.v201005082020-sources.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/eclipse/jetty/orbit/javax.activation/1.1.0.v201105071233/javax.activation-1.1.0.v201105071233.jar" sourcepath="M2_REPO/org/eclipse/jetty/orbit/javax.activation/1.1.0.v201105071233/javax.activation-1.1.0.v201105071233-sources.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/eclipse/jetty/jetty-deploy/8.1.16.v20140903/jetty-deploy-8.1.16.v20140903.jar" sourcepath="M2_REPO/org/eclipse/jetty/jetty-deploy/8.1.16.v20140903/jetty-deploy-8.1.16.v20140903-sources.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/eclipse/jetty/jetty-annotations/8.1.16.v20140903/jetty-annotations-8.1.16.v20140903.jar" sourcepath="M2_REPO/org/eclipse/jetty/jetty-annotations/8.1.16.v20140903/jetty-annotations-8.1.16.v20140903-sources.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/eclipse/jetty/orbit/javax.annotation/1.1.0.v201108011116/javax.annotation-1.1.0.v201108011116.jar" sourcepath="M2_REPO/org/eclipse/jetty/orbit/javax.annotation/1.1.0.v201108011116/javax.annotation-1.1.0.v201108011116-sources.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/eclipse/jetty/orbit/org.objectweb.asm/3.1.0.v200803061910/org.objectweb.asm-3.1.0.v200803061910.jar" sourcepath="M2_REPO/org/eclipse/jetty/orbit/org.objectweb.asm/3.1.0.v200803061910/org.objectweb.asm-3.1.0.v200803061910-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/eclipse/jetty/orbit/org.objectweb.asm/3.1.0.v200803061910/org.objectweb.asm-3.1.0.v200803061910.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/eclipse/jetty/jetty-rewrite/8.1.16.v20140903/jetty-rewrite-8.1.16.v20140903.jar" sourcepath="M2_REPO/org/eclipse/jetty/jetty-rewrite/8.1.16.v20140903/jetty-rewrite-8.1.16.v20140903-sources.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/eclipse/jetty/jetty-client/8.1.16.v20140903/jetty-client-8.1.16.v20140903.jar" sourcepath="M2_REPO/org/eclipse/jetty/jetty-client/8.1.16.v20140903/jetty-client-8.1.16.v20140903-sources.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/eclipse/jetty/jetty-start/8.1.16.v20140903/jetty-start-8.1.16.v20140903.jar" sourcepath="M2_REPO/org/eclipse/jetty/jetty-start/8.1.16.v20140903/jetty-start-8.1.16.v20140903-sources.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/eclipse/jetty/jetty-jaspi/8.1.16.v20140903/jetty-jaspi-8.1.16.v20140903.jar" sourcepath="M2_REPO/org/eclipse/jetty/jetty-jaspi/8.1.16.v20140903/jetty-jaspi-8.1.16.v20140903-sources.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/eclipse/jetty/orbit/javax.security.auth.message/1.0.0.v201108011116/javax.security.auth.message-1.0.0.v201108011116.jar" sourcepath="M2_REPO/org/eclipse/jetty/orbit/javax.security.auth.message/1.0.0.v201108011116/javax.security.auth.message-1.0.0.v201108011116-sources.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/eclipse/jetty/jetty-nosql/8.1.16.v20140903/jetty-nosql-8.1.16.v20140903.jar" sourcepath="M2_REPO/org/eclipse/jetty/jetty-nosql/8.1.16.v20140903/jetty-nosql-8.1.16.v20140903-sources.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/mongodb/mongo-java-driver/2.6.1/mongo-java-driver-2.6.1.jar" sourcepath="M2_REPO/org/mongodb/mongo-java-driver/2.6.1/mongo-java-driver-2.6.1-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/mongodb/mongo-java-driver/2.6.1/mongo-java-driver-2.6.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/eclipse/jetty/jetty-monitor/8.1.16.v20140903/jetty-monitor-8.1.16.v20140903.jar" sourcepath="M2_REPO/org/eclipse/jetty/jetty-monitor/8.1.16.v20140903/jetty-monitor-8.1.16.v20140903-sources.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/eclipse/jetty/jetty-http-spi/8.1.16.v20140903/jetty-http-spi-8.1.16.v20140903.jar" sourcepath="M2_REPO/org/eclipse/jetty/jetty-http-spi/8.1.16.v20140903/jetty-http-spi-8.1.16.v20140903-sources.jar"/>
-  <classpathentry kind="var" path="M2_REPO/redis/clients/jedis/2.1.0/jedis-2.1.0.jar" sourcepath="M2_REPO/redis/clients/jedis/2.1.0/jedis-2.1.0-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/redis/clients/jedis/2.1.0/jedis-2.1.0.jar" sourcepath="M2_REPO/redis/clients/jedis/2.1.0/jedis-2.1.0-sources.jar">
+    <attributes>
+      <attribute value="jar:file:/Users/yp/m2/repo/redis/clients/jedis/2.1.0/jedis-2.1.0-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
   <classpathentry kind="var" path="M2_REPO/commons-pool/commons-pool/1.5.5/commons-pool-1.5.5.jar" sourcepath="M2_REPO/commons-pool/commons-pool/1.5.5/commons-pool-1.5.5-sources.jar">
     <attributes>
-      <attribute value="jar:file:/E:/.m2/repository/commons-pool/commons-pool/1.5.5/commons-pool-1.5.5-javadoc.jar!/" name="javadoc_location"/>
+      <attribute value="jar:file:/Users/yp/m2/repo/commons-pool/commons-pool/1.5.5/commons-pool-1.5.5-javadoc.jar!/" name="javadoc_location"/>
     </attributes>
   </classpathentry>
   <classpathentry kind="var" path="M2_REPO/com/thoughtworks/xstream/xstream/1.4.2/xstream-1.4.2.jar" sourcepath="M2_REPO/com/thoughtworks/xstream/xstream/1.4.2/xstream-1.4.2-sources.jar">
     <attributes>
-      <attribute value="jar:file:/E:/.m2/repository/com/thoughtworks/xstream/xstream/1.4.2/xstream-1.4.2-javadoc.jar!/" name="javadoc_location"/>
+      <attribute value="jar:file:/Users/yp/m2/repo/com/thoughtworks/xstream/xstream/1.4.2/xstream-1.4.2-javadoc.jar!/" name="javadoc_location"/>
     </attributes>
   </classpathentry>
   <classpathentry kind="var" path="M2_REPO/xmlpull/xmlpull/1.1.3.1/xmlpull-1.1.3.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/xpp3/xpp3_min/1.1.4c/xpp3_min-1.1.4c.jar" sourcepath="M2_REPO/xpp3/xpp3_min/1.1.4c/xpp3_min-1.1.4c-sources.jar">
     <attributes>
-      <attribute value="jar:file:/E:/.m2/repository/xpp3/xpp3_min/1.1.4c/xpp3_min-1.1.4c-javadoc.jar!/" name="javadoc_location"/>
+      <attribute value="jar:file:/Users/yp/m2/repo/xpp3/xpp3_min/1.1.4c/xpp3_min-1.1.4c-javadoc.jar!/" name="javadoc_location"/>
     </attributes>
   </classpathentry>
   <classpathentry kind="var" path="M2_REPO/org/codehaus/jackson/jackson-core-asl/1.9.13/jackson-core-asl-1.9.13.jar" sourcepath="M2_REPO/org/codehaus/jackson/jackson-core-asl/1.9.13/jackson-core-asl-1.9.13-sources.jar">
     <attributes>
-      <attribute value="jar:file:/E:/.m2/repository/org/codehaus/jackson/jackson-core-asl/1.9.13/jackson-core-asl-1.9.13-javadoc.jar!/" name="javadoc_location"/>
+      <attribute value="jar:file:/Users/yp/m2/repo/org/codehaus/jackson/jackson-core-asl/1.9.13/jackson-core-asl-1.9.13-javadoc.jar!/" name="javadoc_location"/>
     </attributes>
   </classpathentry>
   <classpathentry kind="var" path="M2_REPO/org/codehaus/jackson/jackson-mapper-asl/1.9.13/jackson-mapper-asl-1.9.13.jar" sourcepath="M2_REPO/org/codehaus/jackson/jackson-mapper-asl/1.9.13/jackson-mapper-asl-1.9.13-sources.jar">
     <attributes>
-      <attribute value="jar:file:/E:/.m2/repository/org/codehaus/jackson/jackson-mapper-asl/1.9.13/jackson-mapper-asl-1.9.13-javadoc.jar!/" name="javadoc_location"/>
+      <attribute value="jar:file:/Users/yp/m2/repo/org/codehaus/jackson/jackson-mapper-asl/1.9.13/jackson-mapper-asl-1.9.13-javadoc.jar!/" name="javadoc_location"/>
     </attributes>
   </classpathentry>
   <classpathentry kind="var" path="M2_REPO/trove/trove/1.0.2/trove-1.0.2.jar"/>
-  <classpathentry kind="var" path="M2_REPO/dom4j/dom4j/1.6.1/dom4j-1.6.1.jar" sourcepath="M2_REPO/dom4j/dom4j/1.6.1/dom4j-1.6.1-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/E:/.m2/repository/dom4j/dom4j/1.6.1/dom4j-1.6.1-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
-  <classpathentry kind="var" path="M2_REPO/xml-apis/xml-apis/1.0.b2/xml-apis-1.0.b2.jar" sourcepath="M2_REPO/xml-apis/xml-apis/1.0.b2/xml-apis-1.0.b2-sources.jar">
-    <attributes>
-      <attribute value="jar:file:/E:/.m2/repository/xml-apis/xml-apis/1.0.b2/xml-apis-1.0.b2-javadoc.jar!/" name="javadoc_location"/>
-    </attributes>
-  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/dom4j/dom4j/1.6.1/dom4j-1.6.1.jar" sourcepath="M2_REPO/dom4j/dom4j/1.6.1/dom4j-1.6.1-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/xml-apis/xml-apis/1.0.b2/xml-apis-1.0.b2.jar" sourcepath="M2_REPO/xml-apis/xml-apis/1.0.b2/xml-apis-1.0.b2-sources.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/apache/commons/commons-lang3/3.1/commons-lang3-3.1.jar" sourcepath="M2_REPO/org/apache/commons/commons-lang3/3.1/commons-lang3-3.1-sources.jar">
     <attributes>
-      <attribute value="jar:file:/E:/.m2/repository/org/apache/commons/commons-lang3/3.1/commons-lang3-3.1-javadoc.jar!/" name="javadoc_location"/>
+      <attribute value="jar:file:/Users/yp/m2/repo/org/apache/commons/commons-lang3/3.1/commons-lang3-3.1-javadoc.jar!/" name="javadoc_location"/>
     </attributes>
   </classpathentry>
   <classpathentry kind="var" path="M2_REPO/commons-codec/commons-codec/1.9/commons-codec-1.9.jar" sourcepath="M2_REPO/commons-codec/commons-codec/1.9/commons-codec-1.9-sources.jar"/>
