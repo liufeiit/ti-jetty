@@ -1,11 +1,3 @@
-/target/
-/build/
-/jetty/lib/
-/jetty/logs/
-/jetty/.tmp/
-.classpath
-.project
-
 *.class
 
 # Package Files #
