@@ -3,3 +3,7 @@
 /jetty/lib/
 /jetty/logs/
 /jetty/.tmp/
+.classpath
+.project
+
+
